@@ -15,7 +15,7 @@ export function InputField({
   ...props
 }: InputFieldProps) {
   return (
-    <div className="relative flex h-[50px] w-[341px] items-center gap-[8px] rounded-[8px] border border-[#ECEEF0] bg-white px-[16px]">
+    <div className="relative flex h-[50px] w-[341px] items-center gap-[8px] rounded-[8px] border border-[#ECEEF0] bg-white pl-[16px] pr-[16px]">
       <Image
         src={iconSrc}
         alt="icon"
@@ -27,7 +27,7 @@ export function InputField({
         className={`flex-1 bg-transparent text-[15px] font-medium text-teum-ink placeholder-[#99A0AE] outline-none font-pretendard ${className}`}
         {...props}
       />
-      {rightElement && <div className="shrink-0">{rightElement}</div>}
+      {rightElement && <div className="shrink-0 -mr-[4px]">{rightElement}</div>}
     </div>
   );
 }
