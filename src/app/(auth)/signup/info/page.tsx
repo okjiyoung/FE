@@ -28,6 +28,7 @@ export default function SignupInfoPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isFormValid) {
+      router.push("/signup/terms");
     }
   };
 

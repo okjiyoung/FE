@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -12,6 +13,7 @@ import {
 import { SituationBottomSheet } from "@/features/home/components/SituationBottomSheet";
 
 export function TimeSelectionCard() {
+  const router = useRouter();
   const [selectedTime, setSelectedTime] = useState<string>("3분");
   const [difficulty, setDifficulty] = useState<Difficulty>("중간");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
@@ -99,7 +101,12 @@ export function TimeSelectionCard() {
         </div>
 
         {/* 스트레칭 시작 */}
-        <Button variant="primary">스트레칭 시작하기</Button>
+        <Button
+          variant="primary"
+          onClick={() => router.push("/routine/recommend")}
+        >
+          스트레칭 시작하기
+        </Button>
       </Card>
 
       {/* 상황 수정 바텀시트 모달 */}

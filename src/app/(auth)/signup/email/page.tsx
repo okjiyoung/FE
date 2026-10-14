@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SignupHeader } from "@/features/auth/components/SignupHeader";
 import { EmailInputField } from "@/features/auth/components/EmailInputField";
 import { EmailValidationMessage } from "@/features/auth/components/EmailValidationMessage";
 
 export default function SignupEmailPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
 
   const isValidEmail = email.includes("@") && email.includes(".");
@@ -18,6 +20,7 @@ export default function SignupEmailPage() {
     e.preventDefault();
     if (isValidEmail) {
       // 인증번호 받기 로직 수행
+      router.push("/signup/verify");
     }
   };
 

@@ -1,12 +1,14 @@
 "use client";
 
 import { useState, useRef, KeyboardEvent } from "react";
+import { useRouter } from "next/navigation";
 import { SignupHeader } from "@/features/auth/components/SignupHeader";
 import { AuthErrorToast } from "@/features/auth/components/AuthErrorToast";
 import { VerificationCodeInputs } from "@/features/auth/components/VerificationCodeInputs";
 import { TimerAndResend } from "@/features/auth/components/TimerAndResend";
 
 export default function VerifyCodePage() {
+  const router = useRouter();
   const [code, setCode] = useState<string[]>(["1", "5", "2", "", "", ""]);
   const [hasError, setHasError] = useState(true); // 에러 상태 테스트용
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -35,6 +37,7 @@ export default function VerifyCodePage() {
     e.preventDefault();
     if (isComplete) {
       // 인증하기 로직 실행
+      router.push("/signup/info");
     }
   };
 

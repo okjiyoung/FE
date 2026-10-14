@@ -42,7 +42,7 @@ export default function TermsPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isRequiredAgreed) {
-      router.push("/");
+      router.push("/signup/complete");
     }
   };
 
