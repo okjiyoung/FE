@@ -84,7 +84,7 @@ export function SituationBottomSheet({
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
       <div className="absolute inset-0" onClick={onClose} />
 
-      <div className="relative z-10 flex h-[592px] w-[390px] flex-col items-start gap-[12px] rounded-t-[32px] bg-teum-white p-[32px_24px_24px_24px]">
+      <div className="relative z-10 flex h-[592px] w-full max-w-[390px] flex-col items-start gap-[12px] rounded-t-[32px] bg-teum-white p-[32px_24px_24px_24px]">
         <div className="absolute left-1/2 top-[12px] h-[4px] w-[36px] -translate-x-1/2 rounded-[2px] bg-[#E2E2E2]" />
 
         <div className="flex w-full items-start justify-between">
@@ -100,14 +100,14 @@ export function SituationBottomSheet({
           </button>
         </div>
 
-        <p className="w-[342px] text-[13px] font-normal leading-[19px] tracking-[-0.26px] text-teum-muted">
+        <p className="w-full text-[13px] font-normal leading-[19px] tracking-[-0.26px] text-teum-muted">
           장소는 자동으로 찾았어요.
           <br />
           자세와 움직일 공간을 확인해 주세요.
         </p>
 
         {/* 장소 선택 */}
-        <div className="flex w-[342px] items-start gap-[6px]">
+        <div className="flex w-full items-start gap-[6px]">
           {locations.map((loc) => {
             const isSelected = selectedLocation === loc;
             return (
@@ -132,7 +132,7 @@ export function SituationBottomSheet({
           <span className="text-[14px] font-bold leading-[20px] tracking-[-0.28px] text-teum-ink">
             현재 자세
           </span>
-          <div className="flex w-[342px] items-start gap-[6px]">
+          <div className="flex w-full items-start gap-[6px]">
             {postures.map((posture) => {
               const isSelected = selectedPosture === posture;
               return (
@@ -158,7 +158,7 @@ export function SituationBottomSheet({
           <span className="text-[14px] font-bold leading-[20px] tracking-[-0.28px] text-teum-ink">
             동작 제약
           </span>
-          <div className="flex w-[342px] items-start gap-[6px]">
+          <div className="flex w-full items-start gap-[6px]">
             {restrictions.map((res) => {
               const isSelected = selectedRestriction === res;
               return (
@@ -184,7 +184,7 @@ export function SituationBottomSheet({
           <span className="text-[14px] font-bold leading-[20px] tracking-[-0.28px] text-teum-ink">
             관리 부위
           </span>
-          <div className="flex w-[342px] flex-wrap items-start align-content-start gap-[6px]">
+          <div className="flex w-full flex-wrap items-start align-content-start gap-[6px]">
             {bodyParts.map((part) => {
               const isSelected = selectedBodyParts.includes(part);
               return (

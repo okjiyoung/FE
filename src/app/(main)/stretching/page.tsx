@@ -35,7 +35,7 @@ export default function StretchingPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-[390px] flex-col items-start gap-[20px] p-[24px]">
+    <main className="flex w-full flex-col items-start gap-[20px] p-[24px]">
       <Header title="스트레칭" onExit={handleExit} />
 
       <StretchingProgress currentStep={currentStep} totalSteps={totalSteps} />

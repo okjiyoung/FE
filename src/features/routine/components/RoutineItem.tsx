@@ -6,7 +6,7 @@ interface RoutineItemProps {
 
 export function RoutineItem({ step, title, duration }: RoutineItemProps) {
   return (
-    <div className="flex h-[64px] w-[342px] items-center gap-[16px] rounded-[18px] bg-teum-white px-[16px]">
+    <div className="flex h-[64px] w-full items-center gap-[16px] rounded-[18px] bg-teum-white px-[16px]">
       <span className="text-[14px] font-bold leading-[20px] tracking-[-0.28px] text-teum-muted">
         {step}
       </span>

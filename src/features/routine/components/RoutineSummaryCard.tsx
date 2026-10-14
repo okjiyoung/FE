@@ -10,7 +10,7 @@ export function RoutineSummaryCard({
   description,
 }: RoutineSummaryCardProps) {
   return (
-    <div className="flex w-[342px] flex-col items-start gap-[8px] rounded-[24px] bg-[#C1B6FF] p-[20px]">
+    <div className="flex w-full flex-col items-start gap-[8px] rounded-[24px] bg-[#C1B6FF] p-[20px]">
       <h3 className="text-[20px] font-bold leading-[29px] tracking-[-0.4px] text-teum-ink">
         {targetParts}
       </h3>

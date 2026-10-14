@@ -30,7 +30,7 @@ export function NavigationBar({ isOpen = false }: NavigationBarProps) {
   ];
 
   return (
-    <nav className="absolute bottom-0 left-1/2 -translate-x-1/2 flex w-[390px] h-[80px] px-[28px] pb-[12px] justify-between items-center bg-teum-white shrink-0 z-40">
+    <nav className="absolute bottom-0 inset-x-0 flex w-full h-[80px] px-[28px] pb-[12px] justify-between items-center bg-teum-white shrink-0 z-40">
       {tabs.map((tab) => {
         const isActive = pathname === tab.href;
 

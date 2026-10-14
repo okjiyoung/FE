@@ -39,7 +39,7 @@ export default function VerifyCodePage() {
   };
 
   return (
-    <main className="flex min-h-[844px] w-[390px] flex-col items-start bg-white px-[24px] pt-[13px] pb-[53px] mx-auto overflow-hidden">
+    <main className="flex min-h-screen w-full flex-col items-start bg-white px-[24px] pt-[13px] pb-[53px]">
       {hasError && (
         <div className="mb-[20px] w-full flex justify-center">
           <AuthErrorToast message="인증번호가 잘못되었습니다" />

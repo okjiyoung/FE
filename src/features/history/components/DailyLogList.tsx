@@ -19,12 +19,12 @@ export default function DailyLogList({
   logs?: LogItem[];
 }) {
   return (
-    <section className="flex flex-col gap-[12px] w-[342px]">
+    <section className="flex flex-col gap-[12px] w-full">
       <h3 className="text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-ink font-pretendard">
         오늘의 기록
       </h3>
 
-      <div className="flex flex-col gap-[8px] w-[342px]">
+      <div className="flex flex-col gap-[8px] w-full">
         {logs.map((log) => (
           <div
             key={log.id}

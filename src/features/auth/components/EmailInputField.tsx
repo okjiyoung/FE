@@ -15,7 +15,7 @@ export function EmailInputField({
   onClear,
 }: EmailInputFieldProps) {
   return (
-    <div className="relative flex h-[50px] w-[342px] items-center rounded-[8px] border border-[#ECEEF0] bg-white pl-[16px] pr-[16px]">
+    <div className="relative flex h-[50px] w-full items-center rounded-[8px] border border-[#ECEEF0] bg-white pl-[16px] pr-[16px]">
       <input
         type="email"
         placeholder="이메일 입력"

@@ -22,7 +22,7 @@ export default function SignupEmailPage() {
   };
 
   return (
-    <main className="flex min-h-[844px] w-[390px] flex-col items-start bg-white px-[24px] pt-[13px] pb-[53px] mx-auto overflow-hidden">
+    <main className="flex min-h-screen w-full flex-col items-start bg-white px-[24px] pt-[13px] pb-[53px]">
       <SignupHeader />
 
       <div className="mt-[47px] flex flex-col gap-[8px] w-full">
@@ -49,7 +49,7 @@ export default function SignupEmailPage() {
         <button
           type="submit"
           disabled={!isValidEmail}
-          className={`mt-auto flex h-[54px] w-[342px] items-center justify-center rounded-[28px] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-white transition-colors ${
+          className={`mt-auto flex h-[54px] w-full items-center justify-center rounded-[28px] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-white transition-colors ${
             isValidEmail
               ? "cursor-pointer bg-teum-ink hover:opacity-90"
               : "cursor-not-allowed bg-[#BDC5CE]"

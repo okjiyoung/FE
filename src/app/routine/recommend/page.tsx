@@ -18,7 +18,7 @@ export default function RecommendRoutinePage() {
 
   return (
     <div className="flex h-full min-h-screen w-[390px] flex-col items-start gap-[20px] bg-[#F7F7F8] px-[24px] pb-[24px]">
-      <Header title="추천 루틴" />=
+      <Header title="추천 루틴" />
       <h1 className="w-[342px] text-[28px] font-bold leading-[41px] tracking-[-0.56px] text-teum-ink">
         지금의 나에게,
         <br />

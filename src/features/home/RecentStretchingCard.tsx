@@ -16,7 +16,7 @@ export function RecentStretchingCard({
   onCardClick,
 }: RecentStretchingProps) {
   return (
-    <section className="flex w-[342px] flex-col gap-[12px]">
+    <section className="flex w-full flex-col gap-[12px]">
       <div className="flex w-full items-center justify-between">
         <h3 className="text-[17px] font-bold leading-[25px] tracking-[-0.34px] text-teum-ink">
           최근 한 스트레칭

@@ -51,7 +51,7 @@ export default function CalendarSection() {
   };
 
   return (
-    <section className="flex flex-col gap-[12px] p-[16px] w-[342px] bg-white rounded-[24px]">
+    <section className="flex flex-col gap-[12px] p-[16px] w-full bg-white rounded-[24px]">
       {/* 요일 표시 */}
       <div className="grid grid-cols-7 w-full text-center">
         {DAYS_OF_WEEK.map((day, idx) => (
