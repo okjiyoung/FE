@@ -4,16 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function NavigationBar() {
+interface NavigationBarProps {
+  isOpen?: boolean;
+}
+
+export function NavigationBar({ isOpen = false }: NavigationBarProps) {
   const pathname = usePathname();
 
+  if (isOpen) return null;
+
   const tabs = [
-    {
-      id: "home",
-      label: "홈",
-      href: "/",
-      icon: "/icons/Nav.home.icon.svg",
-    },
+    { id: "home", label: "홈", href: "/", icon: "/icons/Nav.home.icon.svg" },
     {
       id: "favorites",
       label: "즐겨찾기",
@@ -29,7 +30,7 @@ export function NavigationBar() {
   ];
 
   return (
-    <nav className="absolute bottom-0 left-1/2 -translate-x-1/2 flex w-[390px] h-[80px] px-[28px] pb-[12px] justify-between items-center bg-teum-white shrink-0 z-50">
+    <nav className="absolute bottom-0 left-1/2 -translate-x-1/2 flex w-[390px] h-[80px] px-[28px] pb-[12px] justify-between items-center bg-teum-white shrink-0 z-40">
       {tabs.map((tab) => {
         const isActive = pathname === tab.href;
 
@@ -38,7 +39,7 @@ export function NavigationBar() {
             key={tab.id}
             href={tab.href}
             className={`flex w-[80px] h-[56px] flex-col justify-center items-center gap-[4px] shrink-0 transition-all ${
-              isActive ? "rounded-[20px] bg-teum-tint" : ""
+              isActive ? "rounded-[20px] bg-[#ECE8FC]" : ""
             }`}
           >
             <Image
