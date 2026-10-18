@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "./config";
+import { getAuthToken } from "./authToken";
 
 type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
@@ -30,10 +31,13 @@ async function request<T>(
   path: string,
   { body, headers, ...options }: RequestOptions = {}
 ): Promise<T> {
+  const token = getAuthToken();
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
