@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { SignupHeader } from "@/features/auth/components/SignupHeader";
 import { PasswordInputField } from "@/features/auth/components/PasswordInputField";
 import { NicknameInputField } from "@/features/auth/components/NicknameInputField";
-import { Button } from "@/components/ui/Button";
+import { saveSignupDraft } from "@/features/auth/signupDraft";
 
-export default function SignupInfoPage() {
+function SignupInfoContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") ?? "";
 
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
@@ -27,9 +29,10 @@ export default function SignupInfoPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isFormValid) {
-      router.push("/signup/terms");
-    }
+    if (!isFormValid) return;
+
+    saveSignupDraft({ email, password });
+    router.push("/signup/terms");
   };
 
   return (
@@ -120,5 +123,13 @@ export default function SignupInfoPage() {
         </div>
       </form>
     </main>
+  );
+}
+
+export default function SignupInfoPage() {
+  return (
+    <Suspense fallback={null}>
+      <SignupInfoContent />
+    </Suspense>
   );
 }

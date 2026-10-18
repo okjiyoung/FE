@@ -3,13 +3,20 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SignupHeader } from "@/features/auth/components/SignupHeader";
+import { AuthErrorToast } from "@/features/auth/components/AuthErrorToast";
 import {
   TermsAgreementList,
   TermsState,
 } from "@/features/auth/components/TermsAgreementList";
+import { signUp, login } from "@/features/auth/api/user";
+import { clearSignupDraft, readSignupDraft } from "@/features/auth/signupDraft";
+import { setAuthToken } from "@/services/authToken";
+import { ApiError } from "@/services/apiClient";
 
 export default function TermsPage() {
   const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const [terms, setTerms] = useState<TermsState>({
     service: false,
@@ -39,10 +46,31 @@ export default function TermsPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isRequiredAgreed) {
+    if (!isRequiredAgreed || isSubmitting) return;
+
+    const draft = readSignupDraft();
+    if (!draft) {
+      router.push("/signup/email");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError(null);
+
+    try {
+      await signUp(draft.email, draft.password);
+      const loginResult = await login(draft.email, draft.password);
+      setAuthToken(loginResult.token, true);
+      clearSignupDraft();
       router.push("/signup/complete");
+    } catch (err) {
+      setError(
+        err instanceof ApiError ? err.message : "회원가입에 실패했어요."
+      );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -68,20 +96,26 @@ export default function TermsPage() {
         />
       </div>
 
+      {error && (
+        <div className="mt-[20px] w-full flex justify-center">
+          <AuthErrorToast message={error} />
+        </div>
+      )}
+
       <form
         onSubmit={handleSubmit}
         className="mt-auto w-full flex justify-center"
       >
         <button
           type="submit"
-          disabled={!isRequiredAgreed}
+          disabled={!isRequiredAgreed || isSubmitting}
           className={`flex h-[54px] w-[340px] items-center justify-center rounded-[28px] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-white transition-colors ${
-            isRequiredAgreed
+            isRequiredAgreed && !isSubmitting
               ? "cursor-pointer bg-teum-ink hover:opacity-90"
               : "cursor-not-allowed bg-[#BDC5CE]"
           }`}
         >
-          가입 완료하기
+          {isSubmitting ? "가입 처리 중..." : "가입 완료하기"}
         </button>
       </form>
     </main>

@@ -1,20 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { InputField } from "@/components/ui/InputField";
 import { LoginOptions } from "@/features/auth/components/LoginOptions";
+import { login } from "@/features/auth/api/user";
+import { setAuthToken } from "@/services/authToken";
+import { useApiRequest } from "@/hooks/useApiRequest";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
   const [isKeepLoggedIn, setIsKeepLoggedIn] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const { isLoading, error, execute } = useApiRequest(login);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // 로그인 처리 로직
+    if (isLoading || !id || !password) return;
+
+    const result = await execute(id, password);
+    if (result) {
+      setAuthToken(result.token, isKeepLoggedIn);
+      router.push("/");
+    }
   };
 
   return (
@@ -71,11 +83,22 @@ export default function LoginPage() {
           />
         </div>
 
+        {error && (
+          <p className="font-pretendard text-[14px] font-medium text-[#DF5757]">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
-          className="mt-[28px] flex h-[54px] w-[340px] cursor-pointer items-center justify-center rounded-[28px] bg-teum-ink font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-white transition-opacity hover:opacity-90"
+          disabled={isLoading}
+          className={`mt-[28px] flex h-[54px] w-[340px] items-center justify-center rounded-[28px] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-white transition-opacity ${
+            isLoading
+              ? "cursor-not-allowed bg-[#BDC5CE]"
+              : "cursor-pointer bg-teum-ink hover:opacity-90"
+          }`}
         >
-          시작하기
+          {isLoading ? "로그인 중..." : "시작하기"}
         </button>
       </form>
 

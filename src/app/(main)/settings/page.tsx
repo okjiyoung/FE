@@ -1,16 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { UserProfileCard } from "@/features/settings/components/UserProfileCard";
 import { SettingItemCard } from "@/features/settings/components/SettingItemCard";
 import { Toggle } from "@/components/ui/Toggle";
+import { getMyInfo } from "@/features/auth/api/user";
+import { clearAuthToken } from "@/services/authToken";
 
 export default function SettingsPage() {
+  const router = useRouter();
   const [recommendNotification, setRecommendNotification] = useState(true);
   const [permissionManagement, setPermissionManagement] = useState(true);
+  const [email, setEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    getMyInfo()
+      .then((info) => setEmail(info.userId))
+      .catch(() => router.replace("/login"));
+  }, [router]);
 
   const handleLogout = () => {
-    // 로그아웃 로직 실행
+    clearAuthToken();
+    router.push("/login");
   };
 
   return (
@@ -21,7 +33,7 @@ export default function SettingsPage() {
       </h1>
 
       {/* 사용자 정보 카드 */}
-      <UserProfileCard nickname="태윤" email="taeyoon@email.com" />
+      <UserProfileCard nickname="회원" email={email ?? ""} />
 
       {/* 섹션 라벨 */}
       <span className="text-[13px] font-medium leading-[19px] tracking-[-0.26px] text-teum-text-sub">
