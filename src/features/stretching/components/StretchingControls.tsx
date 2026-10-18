@@ -14,7 +14,7 @@ export function StretchingControls({
   onNext,
 }: StretchingControlsProps) {
   return (
-    <div className="flex w-[342px] items-center justify-center gap-[16px]">
+    <div className="flex w-full items-center justify-center gap-[16px]">
       <button
         type="button"
         onClick={onPrev}

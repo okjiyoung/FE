@@ -18,7 +18,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-[390px] flex-col items-center bg-white px-[24px] pt-[150px] pb-[40px] mx-auto overflow-hidden">
+    <main className="flex min-h-screen w-full flex-col items-center bg-white px-[24px] pt-[150px] pb-[40px]">
       <div className="flex justify-center">
         <Image
           src="/icons/teumjitlogo.svg"

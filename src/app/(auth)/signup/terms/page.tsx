@@ -42,12 +42,12 @@ export default function TermsPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isRequiredAgreed) {
-      router.push("/");
+      router.push("/signup/complete");
     }
   };
 
   return (
-    <main className="flex min-h-[844px] w-[390px] flex-col items-start bg-white px-[24px] pt-[13px] pb-[53px] mx-auto overflow-hidden">
+    <main className="flex min-h-screen w-full flex-col items-start bg-white px-[24px] pt-[13px] pb-[53px]">
       <SignupHeader />
 
       <div className="mt-[47px] flex flex-col gap-[8px] w-full">

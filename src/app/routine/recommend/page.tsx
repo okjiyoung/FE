@@ -1,11 +1,14 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { Header } from "@/components/ui/Header";
 import { ApplyButton } from "@/components/ui/ApplyButton";
 import { RoutineSummaryCard } from "@/features/routine/components/RoutineSummaryCard";
 import { RoutineItem } from "@/features/routine/components/RoutineItem";
 
 export default function RecommendRoutinePage() {
+  const router = useRouter();
+
   const routineList = [
     { id: 1, step: "01", title: "턱 당기기", duration: "30초" },
     { id: 2, step: "02", title: "어깨 내리기", duration: "30초" },
@@ -14,11 +17,13 @@ export default function RecommendRoutinePage() {
     { id: 5, step: "05", title: "견갑골 조이기", duration: "30초" },
   ];
 
-  const handleStartRoutine = () => {};
+  const handleStartRoutine = () => {
+    router.push("/stretching");
+  };
 
   return (
     <div className="flex h-full min-h-screen w-[390px] flex-col items-start gap-[20px] bg-[#F7F7F8] px-[24px] pb-[24px]">
-      <Header title="추천 루틴" />=
+      <Header title="추천 루틴" />
       <h1 className="w-[342px] text-[28px] font-bold leading-[41px] tracking-[-0.56px] text-teum-ink">
         지금의 나에게,
         <br />

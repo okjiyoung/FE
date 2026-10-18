@@ -7,7 +7,7 @@ import DailyLogList from "@/features/history/components/DailyLogList";
 
 export default function HistoryPage() {
   return (
-    <main className="flex flex-col items-start gap-[12px] w-[390px] p-[24px] flex-1 bg-teum-bg min-h-screen">
+    <main className="flex flex-col items-start gap-[12px] w-full p-[24px] flex-1 bg-teum-bg">
       <HistoryHeader />
       <CalendarSection />
       <DailySummaryCard />

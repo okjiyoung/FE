@@ -14,7 +14,7 @@ export function ApplyButton({
   return (
     <button
       type="button"
-      className={`mt-auto flex h-[56px] w-[342px] shrink-0 items-center justify-center rounded-[28px] bg-teum-ink text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-white transition-opacity hover:opacity-90 ${className}`}
+      className={`mt-auto flex h-[56px] w-full shrink-0 items-center justify-center rounded-[28px] bg-teum-ink text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-white transition-opacity hover:opacity-90 ${className}`}
       {...props}
     >
       {children}

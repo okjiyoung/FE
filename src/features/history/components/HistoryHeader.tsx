@@ -12,8 +12,8 @@ export default function HistoryHeader({
   onNextMonth,
 }: HistoryHeaderProps) {
   return (
-    <header className="flex flex-col gap-[12px] w-[342px]">
-      <h1 className="w-[342px] text-[28px] font-bold leading-[41px] tracking-[-0.56px] text-teum-ink font-pretendard">
+    <header className="flex flex-col gap-[12px] w-full">
+      <h1 className="w-full text-[28px] font-bold leading-[41px] tracking-[-0.56px] text-teum-ink font-pretendard">
         내가 채운 틈
       </h1>
 
