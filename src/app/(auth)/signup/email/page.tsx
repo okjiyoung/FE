@@ -5,10 +5,15 @@ import { useRouter } from "next/navigation";
 import { SignupHeader } from "@/features/auth/components/SignupHeader";
 import { EmailInputField } from "@/features/auth/components/EmailInputField";
 import { EmailValidationMessage } from "@/features/auth/components/EmailValidationMessage";
+import { sendEmailVerificationCode } from "@/features/auth/api/emailVerification";
+import { useApiRequest } from "@/hooks/useApiRequest";
 
 export default function SignupEmailPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const { isLoading, error, execute } = useApiRequest(
+    sendEmailVerificationCode
+  );
 
   const isValidEmail = email.includes("@") && email.includes(".");
 
@@ -16,11 +21,13 @@ export default function SignupEmailPage() {
     setEmail("");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isValidEmail) {
-      // 인증번호 받기 로직 수행
-      router.push("/signup/verify");
+    if (!isValidEmail || isLoading) return;
+
+    const result = await execute(email);
+    if (result !== null) {
+      router.push(`/signup/verify?email=${encodeURIComponent(email)}`);
     }
   };
 
@@ -49,16 +56,22 @@ export default function SignupEmailPage() {
 
         <EmailValidationMessage isValid={isValidEmail} />
 
+        {error && (
+          <p className="mt-[9px] font-pretendard text-[14px] font-medium text-[#DF5757]">
+            {error}
+          </p>
+        )}
+
         <button
           type="submit"
-          disabled={!isValidEmail}
+          disabled={!isValidEmail || isLoading}
           className={`mt-auto flex h-[54px] w-full items-center justify-center rounded-[28px] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-white transition-colors ${
-            isValidEmail
+            isValidEmail && !isLoading
               ? "cursor-pointer bg-teum-ink hover:opacity-90"
               : "cursor-not-allowed bg-[#BDC5CE]"
           }`}
         >
-          인증번호 받기
+          {isLoading ? "전송 중..." : "인증번호 받기"}
         </button>
       </form>
     </main>
