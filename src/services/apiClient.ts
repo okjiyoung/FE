@@ -16,7 +16,6 @@ export class ApiError extends Error {
   }
 }
 
-// 백엔드가 성공/실패 응답을 JSON과 text/plain으로 혼용해서 내려줘서(swagger.yaml 참고) content-type을 보고 분기한다.
 async function parseResponseBody(response: Response): Promise<unknown> {
   if (response.status === 204) return null;
 
@@ -33,15 +32,20 @@ async function request<T>(
 ): Promise<T> {
   const token = getAuthToken();
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...headers,
-    },
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...headers,
+      },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+  } catch {
+    throw new ApiError(0, "네트워크 연결을 확인해주세요.");
+  }
 
   const data = await parseResponseBody(response);
 
