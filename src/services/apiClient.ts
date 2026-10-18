@@ -4,6 +4,28 @@ type RequestOptions = Omit<RequestInit, "body"> & {
   body?: unknown;
 };
 
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    message: string,
+    public data?: unknown
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+// 백엔드가 성공/실패 응답을 JSON과 text/plain으로 혼용해서 내려줘서(swagger.yaml 참고) content-type을 보고 분기한다.
+async function parseResponseBody(response: Response): Promise<unknown> {
+  if (response.status === 204) return null;
+
+  const contentType = response.headers.get("content-type") ?? "";
+  const text = await response.text();
+  if (!text) return null;
+
+  return contentType.includes("application/json") ? JSON.parse(text) : text;
+}
+
 async function request<T>(
   path: string,
   { body, headers, ...options }: RequestOptions = {}
@@ -17,7 +39,17 @@ async function request<T>(
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
 
-  return response.json() as Promise<T>;
+  const data = await parseResponseBody(response);
+
+  if (!response.ok) {
+    const message =
+      typeof data === "string" && data
+        ? data
+        : "요청 처리 중 오류가 발생했습니다.";
+    throw new ApiError(response.status, message, data);
+  }
+
+  return data as T;
 }
 
 export const apiClient = {
