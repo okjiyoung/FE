@@ -7,6 +7,7 @@ import { ApplyButton } from "@/components/ui/ApplyButton";
 interface SituationBottomSheetProps {
   isOpen: boolean;
   onClose: () => void;
+  initialLocation?: string;
   onApply?: (selectedData: {
     location: string;
     posture: string;
@@ -18,9 +19,11 @@ interface SituationBottomSheetProps {
 export function SituationBottomSheet({
   isOpen,
   onClose,
+  initialLocation = "집",
   onApply,
 }: SituationBottomSheetProps) {
-  const [selectedLocation, setSelectedLocation] = useState<string>("집");
+  const [selectedLocation, setSelectedLocation] =
+    useState<string>(initialLocation);
   const [selectedPosture, setSelectedPosture] = useState<string>("서 있음");
   const [selectedRestriction, setSelectedRestriction] =
     useState<string>("한 손만 가능");
@@ -30,6 +33,13 @@ export function SituationBottomSheet({
     "어깨",
     "허리",
   ]);
+
+  // 위치 자동 감지 결과가 바텀시트가 열려있는 동안 반영되도록 동기화함 (렌더 중 상태 조정 패턴)
+  const [syncedLocation, setSyncedLocation] = useState(initialLocation);
+  if (isOpen && initialLocation !== syncedLocation) {
+    setSyncedLocation(initialLocation);
+    setSelectedLocation(initialLocation);
+  }
 
   useEffect(() => {
     if (isOpen) {

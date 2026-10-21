@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Card } from "@/components/ui/Card";
@@ -12,6 +12,7 @@ import {
 } from "@/features/home/components/DifficultyDropdown";
 import { SituationBottomSheet } from "@/features/home/components/SituationBottomSheet";
 import {
+  mapCodeToLocationLabel,
   mapDifficultyToLevel,
   mapLocationToCode,
   mapPostureToCode,
@@ -19,6 +20,9 @@ import {
   parseSelectedTimeToSeconds,
 } from "@/features/home/situationCodes";
 import { saveRecommendationInput } from "@/features/stretching/recommendationInput";
+import { getMyInfo } from "@/features/auth/api/user";
+import { getEnvironment } from "@/features/location/api/environment";
+import { createLocationData } from "@/features/location/api/locationData";
 
 interface Situation {
   location: string;
@@ -50,6 +54,47 @@ export function TimeSelectionCard() {
   const handleApplySituation = (data: Situation) => {
     setSituation(data);
   };
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !("geolocation" in navigator)) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        getMyInfo()
+          .then((me) =>
+            getEnvironment(me.id, latitude, longitude).then((env) => {
+              const detectedLocation = mapCodeToLocationLabel(
+                env.environment
+              );
+              if (detectedLocation) {
+                setSituation((prev) => ({
+                  ...prev,
+                  location: detectedLocation,
+                }));
+              }
+
+              createLocationData({
+                userId: me.id,
+                latitude,
+                longitude,
+                measuredAt: new Date().toISOString(),
+              }).catch(() => {});
+            })
+          )
+          .catch(() => {
+            // 로그인 전이거나 요청 실패 시 조용히 무시하고 기본 선택값 유지함
+          });
+      },
+      () => {
+        // 위치 권한 거부 등 - 조용히 무시함
+      },
+      { timeout: 5000 }
+    );
+  }, []);
 
   const handleStartStretching = () => {
     saveRecommendationInput({
@@ -136,6 +181,7 @@ export function TimeSelectionCard() {
       <SituationBottomSheet
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
+        initialLocation={situation.location}
         onApply={handleApplySituation}
       />
     </>
