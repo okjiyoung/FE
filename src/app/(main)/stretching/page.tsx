@@ -11,6 +11,10 @@ import {
   clearStretchingPlan,
   readStretchingPlan,
 } from "@/features/stretching/stretchingPlan";
+import {
+  getStretchingImages,
+  resolveStretchingImageUrl,
+} from "@/features/stretching/api/stretchingImages";
 
 function formatSeconds(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -29,8 +33,28 @@ export default function StretchingPage() {
   const [remainingSeconds, setRemainingSeconds] = useState(
     () => plan?.[0]?.durationSeconds ?? 0,
   );
+  const [imagesByName, setImagesByName] = useState<Record<string, string>>(
+    {},
+  );
 
   const hasPlan = !!plan && plan.length > 0;
+
+  useEffect(() => {
+    getStretchingImages()
+      .then((images) => {
+        setImagesByName(
+          Object.fromEntries(
+            images.map((img) => [
+              img.stretchingName,
+              resolveStretchingImageUrl(img.imageUrl),
+            ]),
+          ),
+        );
+      })
+      .catch(() => {
+        // 이미지 목록을 못 가져와도 타이머 자체는 정상 동작해야 하므로 무시함
+      });
+  }, []);
 
   useEffect(() => {
     if (!hasPlan) {
@@ -117,6 +141,8 @@ export default function StretchingPage() {
         <StretchingTimer
           formattedTime={formatSeconds(remainingSeconds)}
           progressRatio={progressRatio}
+          imageUrl={imagesByName[current.name]}
+          alt={current.name}
         />
       </div>
 

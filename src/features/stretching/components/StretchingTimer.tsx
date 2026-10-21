@@ -1,11 +1,17 @@
+import Image from "next/image";
+
 interface StretchingTimerProps {
   formattedTime: string;
   progressRatio: number;
+  imageUrl?: string;
+  alt?: string;
 }
 
 export function StretchingTimer({
   formattedTime,
   progressRatio,
+  imageUrl,
+  alt,
 }: StretchingTimerProps) {
   const radius = 125.5;
   const circumference = 2 * Math.PI * radius;
@@ -40,9 +46,21 @@ export function StretchingTimer({
           />
         </svg>
 
-        {/* 일러스트 이미지 추가 필요 */}
-        <div className="absolute inset-0 flex items-center justify-center font-pretendard text-[20px] font-bold text-teum-ink">
-          일러스트
+        <div className="absolute inset-0 flex items-center justify-center overflow-hidden rounded-full">
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={alt ?? "스트레칭 동작"}
+              width={200}
+              height={200}
+              className="h-[200px] w-[200px] object-contain"
+              unoptimized
+            />
+          ) : (
+            <span className="font-pretendard text-[20px] font-bold text-teum-ink">
+              일러스트
+            </span>
+          )}
         </div>
       </div>
 
