@@ -11,6 +11,7 @@ import {
   Difficulty,
 } from "@/features/home/components/DifficultyDropdown";
 import { SituationBottomSheet } from "@/features/home/components/SituationBottomSheet";
+import { CustomTimeBottomSheet } from "@/features/home/components/CustomTimeBottomSheet"; // 경로에 맞게 조절해주세요
 import {
   mapCodeToLocationLabel,
   mapDifficultyToLevel,
@@ -34,8 +35,10 @@ interface Situation {
 export function TimeSelectionCard() {
   const router = useRouter();
   const [selectedTime, setSelectedTime] = useState<string>("3분");
+  const [isCustomTime, setIsCustomTime] = useState<boolean>(false);
   const [difficulty, setDifficulty] = useState<Difficulty>("중간");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  const [isCustomTimeSheetOpen, setIsCustomTimeSheetOpen] = useState(false);
 
   const [situation, setSituation] = useState<Situation>({
     location: "집",
@@ -55,6 +58,11 @@ export function TimeSelectionCard() {
     setSituation(data);
   };
 
+  const handleCustomTimeConfirm = (minutes: number) => {
+    setSelectedTime(`${minutes}분`);
+    setIsCustomTime(true);
+  };
+
   useEffect(() => {
     if (typeof window === "undefined" || !("geolocation" in navigator)) {
       return;
@@ -67,9 +75,7 @@ export function TimeSelectionCard() {
         getMyInfo()
           .then((me) =>
             getEnvironment(me.id, latitude, longitude).then((env) => {
-              const detectedLocation = mapCodeToLocationLabel(
-                env.environment
-              );
+              const detectedLocation = mapCodeToLocationLabel(env.environment);
               if (detectedLocation) {
                 setSituation((prev) => ({
                   ...prev,
@@ -83,16 +89,12 @@ export function TimeSelectionCard() {
                 longitude,
                 measuredAt: new Date().toISOString(),
               }).catch(() => {});
-            })
+            }),
           )
-          .catch(() => {
-            // 로그인 전이거나 요청 실패 시 조용히 무시하고 기본 선택값 유지함
-          });
+          .catch(() => {});
       },
-      () => {
-        // 위치 권한 거부 등 - 조용히 무시함
-      },
-      { timeout: 5000 }
+      () => {},
+      { timeout: 5000 },
     );
   }, []);
 
@@ -121,26 +123,59 @@ export function TimeSelectionCard() {
           />
         </div>
 
-        {/* 시간 선택 */}
         <div className="flex gap-[6px]">
           {timeOptions.map((time) => (
             <Button
               key={time}
-              variant={selectedTime === time ? "active" : "outline"}
-              onClick={() => setSelectedTime(time)}
+              variant={
+                !isCustomTime && selectedTime === time ? "active" : "outline"
+              }
+              onClick={() => {
+                setIsCustomTime(false);
+                setSelectedTime(time);
+              }}
             >
               {time}
             </Button>
           ))}
         </div>
 
-        {/* 직접 설정 */}
-        <Button variant="secondary" className="gap-[8px]">
-          <Image src="/icons/time.svg" alt="시계" width={18} height={18} />
-          <span>원하는 시간 직접 설정</span>
-        </Button>
+        {isCustomTime ? (
+          <div className="flex w-[302px] h-[42px] px-[14px] py-[10px] justify-between items-center rounded-[14px] border border-[rgba(255,255,255,0.55)] bg-[#DDF688]">
+            <div className="flex items-center gap-[8px]">
+              <Image
+                src="/icons/time.svg"
+                alt="시계"
+                width={18}
+                height={18}
+                className="text-[#20211F]"
+              />
+              <span className="font-['Pretendard'] text-[13px] font-semibold leading-[19px] tracking-[-0.26px] text-[#20211F]">
+                {selectedTime}으로 설정됨
+              </span>
+            </div>
+            <div className="flex items-center gap-[8px]">
+              <div className="h-[22px] w-[0px] border-l-[1.5px] border-[#B8D162]" />
+              <button
+                type="button"
+                onClick={() => setIsCustomTimeSheetOpen(true)}
+                className="font-['Pretendard'] text-[13px] font-medium leading-[19px] tracking-[-0.26px] text-[#7F943C] cursor-pointer"
+              >
+                변경
+              </button>
+            </div>
+          </div>
+        ) : (
+          <Button
+            variant="secondary"
+            className="gap-[8px]"
+            onClick={() => setIsCustomTimeSheetOpen(true)}
+          >
+            <Image src="/icons/time.svg" alt="시계" width={18} height={18} />
+            <span>원하는 시간 직접 설정</span>
+          </Button>
+        )}
 
-        {/* 현재 상황 박스 */}
         <div className="flex h-[92px] w-[302px] flex-col gap-[10px] rounded-[18px] bg-white/92 p-[14px_16px]">
           <div className="flex w-full items-center justify-between">
             <span className="text-[14px] font-bold leading-[17px] tracking-[-0.28px] text-teum-text-sub">
@@ -163,7 +198,6 @@ export function TimeSelectionCard() {
             </button>
           </div>
 
-          {/* 태그 영역 */}
           <div className="flex items-center gap-[4px] overflow-x-auto">
             {currentTags.map((tag) => (
               <Tag key={tag} label={tag} />
@@ -171,18 +205,23 @@ export function TimeSelectionCard() {
           </div>
         </div>
 
-        {/* 스트레칭 시작 */}
         <Button variant="primary" onClick={handleStartStretching}>
           스트레칭 시작하기
         </Button>
       </Card>
 
-      {/* 상황 수정 바텀시트 모달 */}
       <SituationBottomSheet
         isOpen={isBottomSheetOpen}
         onClose={() => setIsBottomSheetOpen(false)}
         initialLocation={situation.location}
         onApply={handleApplySituation}
+      />
+
+      <CustomTimeBottomSheet
+        isOpen={isCustomTimeSheetOpen}
+        onClose={() => setIsCustomTimeSheetOpen(false)}
+        onConfirm={handleCustomTimeConfirm}
+        initialMinutes={parseInt(selectedTime, 10) || 3}
       />
     </>
   );
