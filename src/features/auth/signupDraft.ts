@@ -3,6 +3,7 @@ const SIGNUP_DRAFT_KEY = "signup_draft";
 export interface SignupDraft {
   email: string;
   password: string;
+  nickname: string;
 }
 
 export function saveSignupDraft(draft: SignupDraft): void {
