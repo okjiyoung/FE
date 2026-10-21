@@ -2,41 +2,23 @@
 
 const DAYS_OF_WEEK = ["월", "화", "수", "목", "금", "토", "일"];
 
-const CALENDAR_DAYS = [
-  { day: null, level: 0 },
-  { day: 1, level: 0 },
-  { day: 2, level: 0 },
-  { day: 3, level: 0 },
-  { day: 4, level: 0 },
-  { day: 5, level: 0 },
-  { day: 6, level: 0 },
-  { day: 7, level: 0 },
-  { day: 8, level: 0 },
-  { day: 9, level: 3 },  
-  { day: 10, level: 1 },  
-  { day: 11, level: 2 },  
-  { day: 12, level: 0 },
-  { day: 13, level: 0 },
-  { day: 14, level: 0 },
-  { day: 15, level: 0 },
-  { day: 16, level: 0 },
-  { day: 17, level: 0 },
-  { day: 18, level: 0 },
-  { day: 19, level: 0 },
-  { day: 20, level: 0 },
-  { day: 21, level: 0 },
-  { day: 22, level: 0 },
-  { day: 23, level: 0 },
-  { day: 24, level: 0 },
-  { day: 25, level: 0 },
-  { day: 26, level: 0 },
-  { day: 27, level: 0 },
-  { day: 28, level: 0 },
-  { day: 29, level: 0 },
-  { day: 30, level: 0 },
-];
+interface CalendarDay {
+  day: number;
+  level: number;
+}
 
-export default function CalendarSection() {
+interface CalendarSectionProps {
+  year: number;
+  month: number; // 1~12
+  // 날짜(일)별 스트레칭 강도(0~3). 백엔드 기록 API 연동 전까지는 비어있어서 전부 레벨 0으로 표시됨
+  levelsByDay?: Record<number, number>;
+}
+
+export default function CalendarSection({
+  year,
+  month,
+  levelsByDay = {},
+}: CalendarSectionProps) {
   const getBgColor = (level: number) => {
     switch (level) {
       case 1:
@@ -44,11 +26,28 @@ export default function CalendarSection() {
       case 2:
         return "bg-[#BEB3FF] text-teum-ink font-medium";
       case 3:
-        return "bg-[#8A79E8] text-teum-ink font-medium";  
+        return "bg-[#8A79E8] text-teum-ink font-medium";
       default:
         return "text-teum-ink font-medium";
     }
   };
+
+  const daysInMonth = new Date(year, month, 0).getDate();
+  // JS getDay()는 일=0~토=6이라, 요일 헤더 순서(월~일)에 맞춰 월=0~일=6으로 보정함
+  const firstWeekday = (new Date(year, month - 1, 1).getDay() + 6) % 7;
+
+  const today = new Date();
+  const isCurrentMonth =
+    today.getFullYear() === year && today.getMonth() + 1 === month;
+  const todayDate = today.getDate();
+
+  const cells: (CalendarDay | null)[] = [
+    ...Array.from({ length: firstWeekday }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => ({
+      day: i + 1,
+      level: levelsByDay[i + 1] ?? 0,
+    })),
+  ];
 
   return (
     <section className="flex flex-col gap-[12px] p-[16px] w-full bg-white rounded-[24px]">
@@ -68,16 +67,20 @@ export default function CalendarSection() {
 
       {/* 날짜 그리드 */}
       <div className="grid grid-cols-7 gap-y-[4px] justify-items-center w-full">
-        {CALENDAR_DAYS.map((item, idx) => (
+        {cells.map((item, idx) => (
           <div
             key={idx}
             className="w-[40px] h-[40px] flex items-center justify-center"
           >
-            {item.day !== null && (
+            {item && (
               <div
                 className={`w-[36px] h-[36px] rounded-full flex items-center justify-center text-[14px] font-pretendard transition-colors ${getBgColor(
                   item.level,
-                )}`}
+                )} ${
+                  isCurrentMonth && item.day === todayDate
+                    ? "ring-2 ring-[#8A79E8]"
+                    : ""
+                }`}
               >
                 {item.day}
               </div>
