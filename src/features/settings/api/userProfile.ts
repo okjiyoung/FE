@@ -25,3 +25,10 @@ export function createUserProfile(request: UserProfileRequest) {
 export function getUserProfile(userId: number) {
   return apiClient.get<UserProfileResponse>(`/api/userProfile/${userId}`);
 }
+
+export function updateUserProfile(userId: number, request: UserProfileRequest) {
+  return apiClient.put<UserProfileResponse>(
+    `/api/userProfile/${userId}`,
+    request
+  );
+}
