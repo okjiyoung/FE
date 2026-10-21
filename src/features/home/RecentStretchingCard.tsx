@@ -10,11 +10,12 @@ interface RecentStretchingProps {
 }
 
 export function RecentStretchingCard({
-  title = "아침 얼굴 깨우기",
-  timeInfo = "3분 · 오늘 오전 8:30",
+  title,
+  timeInfo,
   onMoreClick,
   onCardClick,
 }: RecentStretchingProps) {
+  const hasRecord = !!title;
   return (
     <section className="flex w-full flex-col gap-[12px]">
       <div className="flex w-full items-center justify-between">
@@ -50,14 +51,20 @@ export function RecentStretchingCard({
           width={40}
           height={40}
         />
-        <div className="flex flex-col gap-[4px]">
-          <span className="text-[15px] font-medium leading-[20px] tracking-[-0.3px] text-teum-ink">
-            {title}
+        {hasRecord ? (
+          <div className="flex flex-col gap-[4px]">
+            <span className="text-[15px] font-medium leading-[20px] tracking-[-0.3px] text-teum-ink">
+              {title}
+            </span>
+            <span className="text-[14px] font-normal leading-[20px] tracking-[-0.28px] text-gray-500">
+              {timeInfo}
+            </span>
+          </div>
+        ) : (
+          <span className="text-[14px] font-medium leading-[20px] tracking-[-0.28px] text-gray-500">
+            아직 스트레칭 기록이 없어요
           </span>
-          <span className="text-[14px] font-normal leading-[20px] tracking-[-0.28px] text-gray-500">
-            {timeInfo}
-          </span>
-        </div>
+        )}
       </div>
     </section>
   );

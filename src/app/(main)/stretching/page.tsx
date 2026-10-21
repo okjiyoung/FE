@@ -74,6 +74,20 @@ export default function StretchingPage() {
     if (current) setRemainingSeconds(current.durationSeconds);
   }
 
+  // 실제로 진행한 시간만큼만 기록함 (끝까지 했으면 전체 시간, 건너뛰면 그때까지 한 만큼)
+  const recordHistory = (elapsedSeconds: number) => {
+    if (!current || elapsedSeconds <= 0) return;
+
+    getMyInfo()
+      .then((me) =>
+        saveStretchingHistory(me.id, {
+          stretchingName: current.name,
+          durationSeconds: elapsedSeconds,
+        }),
+      )
+      .catch(() => {});
+  };
+
   // 재생 중일 때만 1초마다 감소시키고, 0이 되면 다음 단계(또는 완료)로 넘어감
   useEffect(() => {
     if (!isPlaying || !current) return;
@@ -81,14 +95,7 @@ export default function StretchingPage() {
     const timer = setInterval(() => {
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
-          getMyInfo()
-            .then((me) =>
-              saveStretchingHistory(me.id, {
-                stretchingName: current.name,
-                durationSeconds: current.durationSeconds,
-              }),
-            )
-            .catch(() => {});
+          recordHistory(current.durationSeconds);
 
           if (currentStep < totalSteps) {
             setCurrentStep((step) => step + 1);
@@ -102,6 +109,8 @@ export default function StretchingPage() {
     }, 1000);
 
     return () => clearInterval(timer);
+    // recordHistory는 렌더마다 새로 만들어지는 함수라 deps에 넣으면 매초 interval이 리셋됨
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying, currentStep, current, totalSteps, router]);
 
   if (!plan || plan.length === 0 || !current) return null;
@@ -112,6 +121,7 @@ export default function StretchingPage() {
       : 0;
 
   const handleExit = () => {
+    recordHistory(current.durationSeconds - remainingSeconds);
     clearStretchingPlan();
     router.push("/");
   };
@@ -121,6 +131,8 @@ export default function StretchingPage() {
   };
 
   const handleNext = () => {
+    recordHistory(current.durationSeconds - remainingSeconds);
+
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {

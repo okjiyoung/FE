@@ -6,8 +6,8 @@ interface DailySummaryProps {
 }
 
 export default function DailySummaryCard({
-  totalMinutes = 9,
-  summaryText = "9월 9일 · 루틴 3회 · 목 2회 / 어깨 3회",
+  totalMinutes = 0,
+  summaryText = "아직 오늘의 기록이 없어요",
 }: DailySummaryProps) {
   return (
     <div className="flex flex-col gap-[4px] w-full p-[20px] bg-teum-lime rounded-[20px]">
