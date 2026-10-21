@@ -121,6 +121,7 @@ export default function StretchingPage() {
       : 0;
 
   const handleExit = () => {
+    recordHistory(current.durationSeconds - remainingSeconds);
     clearStretchingPlan();
     router.push("/");
   };
