@@ -7,14 +7,8 @@ export interface LogItem {
   duration: string;
 }
 
-const MOCK_LOGS: LogItem[] = [
-  { id: "1", time: "08:30", content: "출근길, 목·어깨 풀기", duration: "3분" },
-  { id: "2", time: "12:40", content: "점심 후 가볍게", duration: "3분" },
-  { id: "3", time: "15:10", content: "목·어깨 가볍게", duration: "3분" },
-];
-
 export default function DailyLogList({
-  logs = MOCK_LOGS,
+  logs = [],
 }: {
   logs?: LogItem[];
 }) {
@@ -23,6 +17,12 @@ export default function DailyLogList({
       <h3 className="text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-ink font-pretendard">
         오늘의 기록
       </h3>
+
+      {logs.length === 0 && (
+        <p className="text-[14px] font-medium text-teum-muted font-pretendard">
+          아직 기록이 없어요
+        </p>
+      )}
 
       <div className="flex flex-col gap-[8px] w-full">
         {logs.map((log) => (
