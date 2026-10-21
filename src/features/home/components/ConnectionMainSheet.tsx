@@ -20,10 +20,10 @@ export function ConnectionMainSheet({
       <div className="mx-auto h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
       <div className="mt-[20px] ml-[8px] flex flex-col gap-[6px]">
-        <h3 className="font-['Pretendard'] text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
+        <h3 className="font-pretendard text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
           내 상황과 연결하기
         </h3>
-        <p className="font-['Pretendard'] text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
+        <p className="font-pretendard text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
           연결할 항목을 선택해주세요
         </p>
       </div>
@@ -35,13 +35,13 @@ export function ConnectionMainSheet({
         >
           <div className="flex items-center gap-[12px]">
             <Image src="/icons/house.svg" alt="집" width={28} height={28} />
-            <span className="font-['Pretendard'] text-[16px] font-semibold tracking-[-0.32px] text-teum-ink">
+            <span className="font-pretendard text-[16px] font-semibold tracking-[-0.32px] text-teum-ink">
               집 위치 등록
             </span>
           </div>
           <div className="flex items-center gap-[4px]">
             <span
-              className={`font-['Pretendard'] text-[15px] font-medium tracking-[-0.3px] ${
+              className={`font-pretendard text-[15px] font-medium tracking-[-0.3px] ${
                 isHomeRegistered ? "text-[#8A79E8]" : "text-[#616670]"
               }`}
             >
@@ -62,13 +62,13 @@ export function ConnectionMainSheet({
         >
           <div className="flex items-center gap-[12px]">
             <Image src="/icons/watch.svg" alt="워치" width={28} height={28} />
-            <span className="font-['Pretendard'] text-[16px] font-semibold tracking-[-0.32px] text-teum-ink">
+            <span className="font-pretendard text-[16px] font-semibold tracking-[-0.32px] text-teum-ink">
               워치 연결
             </span>
           </div>
           <div className="flex items-center gap-[4px]">
             <span
-              className={`font-['Pretendard'] text-[15px] font-medium tracking-[-0.3px] ${
+              className={`font-pretendard text-[15px] font-medium tracking-[-0.3px] ${
                 isWatchConnected ? "text-[#8A79E8]" : "text-[#616670]"
               }`}
             >

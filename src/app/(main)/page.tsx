@@ -33,7 +33,7 @@ export default function HomePage() {
         </button>
       </header>
 
-      <ConnectionBanner onConnect={() => console.log("연결하기 클릭")} />
+      <ConnectionBanner />
       <TimeSelectionCard />
       <QuickBannerCard />
       <RecentStretchingCard />

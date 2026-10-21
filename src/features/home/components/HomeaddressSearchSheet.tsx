@@ -17,10 +17,10 @@ export function HomeAddressSearchSheet({
       <div className="h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
       <div className="mt-[20px] self-start ml-[4px] flex flex-col gap-[6px]">
-        <h3 className="font-['Pretendard'] text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
+        <h3 className="font-pretendard text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
           집 주소 검색
         </h3>
-        <p className="font-['Pretendard'] text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
+        <p className="font-pretendard text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
           도로명, 건물명 또는 지번으로 검색해주세요
         </p>
       </div>
@@ -30,7 +30,7 @@ export function HomeAddressSearchSheet({
         <input
           type="text"
           placeholder="예) 보문로 34다길, 성신여대입구역"
-          className="w-full bg-transparent font-['Pretendard'] text-[16px] font-normal tracking-[-0.32px] text-teum-ink placeholder-[#99A0AE] outline-none"
+          className="w-full bg-transparent font-pretendard text-[16px] font-normal tracking-[-0.32px] text-teum-ink placeholder-[#99A0AE] outline-none"
         />
       </div>
 
@@ -41,7 +41,7 @@ export function HomeAddressSearchSheet({
         <button
           type="button"
           onClick={onCancel}
-          className="flex h-[44px] w-[302px] items-center justify-center font-['Pretendard'] text-[15px] font-medium text-[#616670] cursor-pointer"
+          className="flex h-[44px] w-[302px] items-center justify-center font-pretendard text-[15px] font-medium text-[#616670] cursor-pointer"
         >
           취소
         </button>

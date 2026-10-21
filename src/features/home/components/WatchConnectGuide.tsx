@@ -15,10 +15,10 @@ export function WatchConnectGuideSheet({
       <div className="h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
       <div className="mt-[20px] self-start ml-[4px] flex flex-col gap-[6px]">
-        <h3 className="font-['Pretendard'] text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
+        <h3 className="font-pretendard text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
           워치와 스마트폰을 연결해주세요
         </h3>
-        <p className="font-['Pretendard'] text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
+        <p className="font-pretendard text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
           먼저 블루투스로 워치와 스마트폰을 연결해주세요
         </p>
       </div>
@@ -50,7 +50,7 @@ export function WatchConnectGuideSheet({
         <button
           type="button"
           onClick={onNext}
-          className="flex h-[56px] w-[302px] items-center justify-center rounded-[28px] border border-[#ECEEF0] bg-[#F9F9F9] font-['Pretendard'] text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-ink cursor-pointer"
+          className="flex h-[56px] w-[302px] items-center justify-center rounded-[28px] border border-[#ECEEF0] bg-[#F9F9F9] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-ink cursor-pointer"
         >
           연결했어요
         </button>

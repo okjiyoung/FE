@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
+import { useBottomSheetTransition } from "@/hooks/useBottomSheetTransition";
 
 interface CustomTimeBottomSheetProps {
   isOpen: boolean;
@@ -18,8 +19,9 @@ export function CustomTimeBottomSheet({
   initialMinutes = 3,
 }: CustomTimeBottomSheetProps) {
   const [tempMinutes, setTempMinutes] = useState<number>(initialMinutes);
+  const { shouldRender, isVisible } = useBottomSheetTransition(isOpen);
 
-  if (!isOpen) return null;
+  if (!shouldRender) return null;
 
   const handleDecrease = () => {
     setTempMinutes((prev) => Math.max(1, prev - 1));
@@ -30,8 +32,16 @@ export function CustomTimeBottomSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
-      <div className="inline-flex w-full max-w-[420px] flex-col items-center gap-[25px] rounded-t-[32px] border-t-1.5 border-[#ECEEF0] bg-white p-[12px_24px_40px_24px] shadow-[0_-2px_20px_0_rgba(0,0,0,0.08)]">
+    <div
+      className={`fixed inset-0 z-50 flex items-end justify-center bg-black/50 transition-opacity duration-300 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
+      <div
+        className={`inline-flex w-full max-w-[420px] flex-col items-center gap-[25px] rounded-t-[32px] border-t-1.5 border-[#ECEEF0] bg-white p-[12px_24px_40px_24px] shadow-[0_-2px_20px_0_rgba(0,0,0,0.08)] transition-transform duration-300 ease-out ${
+          isVisible ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         <div className="h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
         <div className="flex flex-col items-center gap-[6px]">

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { ApplyButton } from "@/components/ui/ApplyButton";
+import { useBottomSheetTransition } from "@/hooks/useBottomSheetTransition";
 
 interface SituationBottomSheetProps {
   isOpen: boolean;
@@ -52,7 +53,9 @@ export function SituationBottomSheet({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  const { shouldRender, isVisible } = useBottomSheetTransition(isOpen);
+
+  if (!shouldRender) return null;
 
   const locations = ["집", "회사", "학교", "지하철", "기타"];
   const postures = ["상관없음", "앉아 있음", "서 있음", "걷는 중"];
@@ -91,10 +94,18 @@ export function SituationBottomSheet({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50">
+    <div
+      className={`fixed inset-0 z-50 flex items-end justify-center bg-black/50 transition-opacity duration-300 ${
+        isVisible ? "opacity-100" : "opacity-0"
+      }`}
+    >
       <div className="absolute inset-0" onClick={onClose} />
 
-      <div className="relative z-10 flex h-[592px] w-[390px] flex-col items-start gap-[12px] rounded-t-[32px] bg-teum-white p-[32px_24px_24px_24px]">
+      <div
+        className={`relative z-10 flex h-[592px] w-[390px] flex-col items-start gap-[12px] rounded-t-[32px] bg-teum-white p-[32px_24px_24px_24px] transition-transform duration-300 ease-out ${
+          isVisible ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         <div className="absolute left-1/2 top-[12px] h-[4px] w-[36px] -translate-x-1/2 rounded-[2px] bg-[#E2E2E2]" />
 
         <div className="flex w-full items-start justify-between">

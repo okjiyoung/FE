@@ -15,10 +15,10 @@ export function SamsungHealthGuideSheet({
       <div className="h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
       <div className="mt-[20px] self-start ml-[4px] flex flex-col gap-[6px]">
-        <h3 className="font-['Pretendard'] text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
+        <h3 className="font-pretendard text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
           삼성 헬스에서 알림설정해주세요
         </h3>
-        <p className="font-['Pretendard'] text-[13px] font-normal tracking-[-0.26px] text-[#838A95] leading-relaxed">
+        <p className="font-pretendard text-[13px] font-normal tracking-[-0.26px] text-[#838A95] leading-relaxed">
           삼성 헬스에 들어가, 화면 상단에 “워치 설정 &gt; 알림” 에 들어가
           <br />
           “두 기기에서 함께 알림 받기”를 클릭합니다
@@ -36,7 +36,7 @@ export function SamsungHealthGuideSheet({
         <button
           type="button"
           onClick={onComplete}
-          className="flex h-[56px] w-[302px] items-center justify-center rounded-[28px] border border-[#ECEEF0] bg-[#F9F9F9] font-['Pretendard'] text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-ink cursor-pointer"
+          className="flex h-[56px] w-[302px] items-center justify-center rounded-[28px] border border-[#ECEEF0] bg-[#F9F9F9] font-pretendard text-[16px] font-bold leading-[23px] tracking-[-0.32px] text-teum-ink cursor-pointer"
         >
           나중에 할게요
         </button>

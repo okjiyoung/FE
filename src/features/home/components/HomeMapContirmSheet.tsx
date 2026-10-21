@@ -16,10 +16,10 @@ export function HomeMapConfirmSheet({
       <div className="h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
       <div className="mt-[20px] self-start ml-[4px] flex flex-col gap-[6px]">
-        <h3 className="font-['Pretendard'] text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
+        <h3 className="font-pretendard text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
           이 위치가 집이 맞나요?
         </h3>
-        <p className="font-['Pretendard'] text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
+        <p className="font-pretendard text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
           지도에서 위치를 확인해주세요
         </p>
       </div>
@@ -28,7 +28,7 @@ export function HomeMapConfirmSheet({
         <span className="text-[#838A95] text-[14px]">지도 표시 영역</span>
       </div>
 
-      <p className="mt-[16px] self-start ml-[4px] font-['Pretendard'] text-[15px] font-semibold tracking-[-0.3px] text-[#20211F]">
+      <p className="mt-[16px] self-start ml-[4px] font-pretendard text-[15px] font-semibold tracking-[-0.3px] text-[#20211F]">
         서울특별시 성북구 보문로 123길
       </p>
 
@@ -39,7 +39,7 @@ export function HomeMapConfirmSheet({
         <button
           type="button"
           onClick={onCancel}
-          className="flex h-[44px] w-[302px] items-center justify-center font-['Pretendard'] text-[15px] font-medium text-[#616670] cursor-pointer"
+          className="flex h-[44px] w-[302px] items-center justify-center font-pretendard text-[15px] font-medium text-[#616670] cursor-pointer"
         >
           취소
         </button>
