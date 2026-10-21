@@ -7,6 +7,8 @@ export function getAuthToken(): string | null {
 
 // "로그인 상태 유지" 체크 시 localStorage. 아니면 탭이 닫히면 사라지는 sessionStorage에 저장
 export function setAuthToken(token: string, persist: boolean = true): void {
+  if (typeof window === "undefined") return;
+
   if (persist) {
     localStorage.setItem(TOKEN_KEY, token);
     sessionStorage.removeItem(TOKEN_KEY);
@@ -17,6 +19,7 @@ export function setAuthToken(token: string, persist: boolean = true): void {
 }
 
 export function clearAuthToken(): void {
+  if (typeof window === "undefined") return;
   localStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem(TOKEN_KEY);
 }

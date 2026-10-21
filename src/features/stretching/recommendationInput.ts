@@ -15,10 +15,13 @@ export interface RecommendationInput {
 const RECOMMENDATION_INPUT_KEY = "recommendation_input";
 
 export function saveRecommendationInput(input: RecommendationInput): void {
+  if (typeof window === "undefined") return;
   sessionStorage.setItem(RECOMMENDATION_INPUT_KEY, JSON.stringify(input));
 }
 
 export function readRecommendationInput(): RecommendationInput | null {
+  if (typeof window === "undefined") return null;
+
   const raw = sessionStorage.getItem(RECOMMENDATION_INPUT_KEY);
   if (!raw) return null;
 
