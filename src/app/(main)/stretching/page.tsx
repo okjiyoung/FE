@@ -1,24 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/ui/Header";
 import { StretchingProgress } from "@/features/stretching/components/StretchingProgress";
 import { StretchingTimer } from "@/features/stretching/components/StretchingTimer";
 import { StretchingControls } from "@/features/stretching/components/StretchingControls";
+import { StretchingResponse } from "@/features/stretching/api/stretching";
+import {
+  clearStretchingPlan,
+  readStretchingPlan,
+} from "@/features/stretching/stretchingPlan";
+
+function formatSeconds(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
 
 export default function StretchingPage() {
   const router = useRouter();
 
+  const [plan] = useState<StretchingResponse[] | null>(() =>
+    readStretchingPlan(),
+  );
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 5;
 
-  const targetBodyPart = "팔";
-  const title = "턱 당기기";
-  const description = "시선은 정면에 두고,\n턱을 뒤로 천천히 당겨 주세요.";
+  const hasPlan = !!plan && plan.length > 0;
+
+  useEffect(() => {
+    if (!hasPlan) {
+      router.replace("/routine/recommend");
+    }
+  }, [hasPlan, router]);
+
+  if (!plan || plan.length === 0) return null;
+
+  const totalSteps = plan.length;
+  const current = plan[currentStep - 1];
 
   const handleExit = () => {
+    clearStretchingPlan();
     router.push("/");
   };
 
@@ -30,6 +53,7 @@ export default function StretchingPage() {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
+      clearStretchingPlan();
       router.push("/routine/complete");
     }
   };
@@ -42,20 +66,23 @@ export default function StretchingPage() {
 
       <div className="flex w-full flex-col items-center gap-[5px]">
         <div className="flex items-center justify-center rounded-[12px] bg-[#ECEEF0] px-[12px] py-[4px] font-pretendard text-[15px] font-medium leading-[19px] tracking-[-0.3px] text-[#838A95]">
-          {targetBodyPart}
+          {current.area}
         </div>
 
         <h1 className="w-full text-center font-pretendard text-[24px] font-bold leading-[35px] tracking-[-0.48px] text-teum-ink">
-          {title}
+          {current.name}
         </h1>
 
         <p className="whitespace-pre-line text-center font-pretendard text-[15px] font-normal leading-[22px] tracking-[-0.3px] text-teum-muted">
-          {description}
+          {current.description}
         </p>
       </div>
 
       <div className="mt-[18px] flex w-full justify-center">
-        <StretchingTimer formattedTime="00:30" progressRatio={0.5} />
+        <StretchingTimer
+          formattedTime={formatSeconds(current.durationSeconds)}
+          progressRatio={0.5}
+        />
       </div>
 
       <div className="mt-[20px] flex w-full justify-center">
