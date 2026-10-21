@@ -105,7 +105,7 @@ export default function LoginPage() {
       <div className="mt-[32px] flex w-full items-center justify-center gap-[6px] self-stretch text-center font-pretendard text-[15px] font-medium text-[#3C3F45]">
         <span>계정이 없으신가요?</span>
         <Link
-          href="/signup"
+          href="/signup/email"
           className="font-semibold text-[#6F5DCF] hover:underline"
         >
           회원가입
