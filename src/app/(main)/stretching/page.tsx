@@ -15,6 +15,8 @@ import {
   getStretchingImages,
   resolveStretchingImageUrl,
 } from "@/features/stretching/api/stretchingImages";
+import { saveStretchingHistory } from "@/features/stretching/api/stretchingHistory";
+import { getMyInfo } from "@/features/auth/api/user";
 
 function formatSeconds(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -79,6 +81,15 @@ export default function StretchingPage() {
     const timer = setInterval(() => {
       setRemainingSeconds((prev) => {
         if (prev <= 1) {
+          getMyInfo()
+            .then((me) =>
+              saveStretchingHistory(me.id, {
+                stretchingName: current.name,
+                durationSeconds: current.durationSeconds,
+              }),
+            )
+            .catch(() => {});
+
           if (currentStep < totalSteps) {
             setCurrentStep((step) => step + 1);
           } else {

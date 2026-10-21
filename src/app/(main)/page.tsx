@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { TimeSelectionCard } from "@/features/home/TimeSelectionCard";
@@ -7,9 +8,29 @@ import { QuickBannerCard } from "@/features/home/QuickBannerCard";
 import { RecentStretchingCard } from "@/features/home/RecentStretchingCard";
 import { ConnectionBanner } from "@/features/home/components/ConnectionBanner";
 import { InactiveNoticeCard } from "@/features/home/components/InactiveNoticeCard";
+import { getMyInfo } from "@/features/auth/api/user";
+import { getTodayStretchingSummary } from "@/features/stretching/api/stretchingHistory";
 
 export default function HomePage() {
   const router = useRouter();
+  const [todaySummary, setTodaySummary] = useState<{
+    minutes: number;
+    completedCount: number;
+  } | null>(null);
+
+  useEffect(() => {
+    getMyInfo()
+      .then((me) => getTodayStretchingSummary(me.id))
+      .then((summary) =>
+        setTodaySummary({
+          minutes: summary.totalDurationMinutes,
+          completedCount: summary.completedCount,
+        }),
+      )
+      .catch(() => {
+        // 오늘 기록이 없거나 조회 실패 시 기본값(0분/0회)으로 표시함
+      });
+  }, []);
 
   return (
     <main className="mx-auto flex min-h-full w-[390px] flex-col items-start gap-[20px] rounded-[32px] bg-teum-bg p-[24px]">
@@ -37,7 +58,11 @@ export default function HomePage() {
       <ConnectionBanner />
       <InactiveNoticeCard />
       <TimeSelectionCard />
-      <QuickBannerCard />
+      <QuickBannerCard
+        minutes={todaySummary?.minutes}
+        completedCount={todaySummary?.completedCount}
+        onClick={() => router.push("/history")}
+      />
       <RecentStretchingCard />
     </main>
   );
