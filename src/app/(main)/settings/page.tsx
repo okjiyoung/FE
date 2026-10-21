@@ -9,6 +9,13 @@ import { getMyInfo } from "@/features/auth/api/user";
 import { getUserProfile } from "@/features/settings/api/userProfile";
 import { clearAuthToken } from "@/services/authToken";
 import { ApiError } from "@/services/apiClient";
+import { getWatchConnected } from "@/features/home/connectionPreferences";
+import {
+  getPermissionManagement,
+  getRecommendNotification,
+  setPermissionManagement as persistPermissionManagement,
+  setRecommendNotification as persistRecommendNotification,
+} from "@/features/settings/localPreferences";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -16,14 +23,23 @@ export default function SettingsPage() {
   const [permissionManagement, setPermissionManagement] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
   const [nickname, setNickname] = useState("회원");
+  const [isHomeRegistered, setIsHomeRegistered] = useState(false);
+  const [isWatchConnected, setIsWatchConnected] = useState(false);
 
   useEffect(() => {
+    setRecommendNotification(getRecommendNotification());
+    setPermissionManagement(getPermissionManagement());
+    setIsWatchConnected(getWatchConnected());
+
     getMyInfo()
       .then((info) => {
         setEmail(info.userId);
         return getUserProfile(info.id);
       })
-      .then((profile) => setNickname(profile.nickname))
+      .then((profile) => {
+        setNickname(profile.nickname);
+        setIsHomeRegistered(!!profile.homeAddress);
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {
           router.replace("/login");
@@ -31,6 +47,16 @@ export default function SettingsPage() {
         // 프로필 조회 실패(아직 프로필이 없는 유저 등)는 닉네임 플레이스홀더를 유지함
       });
   }, [router]);
+
+  const handleToggleRecommendNotification = (value: boolean) => {
+    setRecommendNotification(value);
+    persistRecommendNotification(value);
+  };
+
+  const handleTogglePermissionManagement = (value: boolean) => {
+    setPermissionManagement(value);
+    persistPermissionManagement(value);
+  };
 
   const handleLogout = () => {
     clearAuthToken();
@@ -54,14 +80,20 @@ export default function SettingsPage() {
 
       {/* 설정 항목 리스트 */}
       <div className="flex flex-col gap-[8px]">
-        <SettingItemCard label="집 등록 및 위치" value="등록됨" />
-        <SettingItemCard label="워치 연결" value="연결됨" />
+        <SettingItemCard
+          label="집 등록 및 위치"
+          value={isHomeRegistered ? "등록됨" : "미등록"}
+        />
+        <SettingItemCard
+          label="워치 연결"
+          value={isWatchConnected ? "연결됨" : "미연결"}
+        />
         <SettingItemCard
           label="추천 알림"
           rightElement={
             <Toggle
               checked={recommendNotification}
-              onChange={setRecommendNotification}
+              onChange={handleToggleRecommendNotification}
             />
           }
         />
@@ -70,7 +102,7 @@ export default function SettingsPage() {
           rightElement={
             <Toggle
               checked={permissionManagement}
-              onChange={setPermissionManagement}
+              onChange={handleTogglePermissionManagement}
             />
           }
         />
