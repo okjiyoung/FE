@@ -150,7 +150,7 @@ export function TimeSelectionCard() {
                 height={18}
                 className="text-[#20211F]"
               />
-              <span className="font-['Pretendard'] text-[13px] font-semibold leading-[19px] tracking-[-0.26px] text-[#20211F]">
+              <span className="font-pretendard text-[13px] font-semibold leading-[19px] tracking-[-0.26px] text-[#20211F]">
                 {selectedTime}으로 설정됨
               </span>
             </div>
@@ -159,7 +159,7 @@ export function TimeSelectionCard() {
               <button
                 type="button"
                 onClick={() => setIsCustomTimeSheetOpen(true)}
-                className="font-['Pretendard'] text-[13px] font-medium leading-[19px] tracking-[-0.26px] text-[#7F943C] cursor-pointer"
+                className="font-pretendard text-[13px] font-medium leading-[19px] tracking-[-0.26px] text-[#7F943C] cursor-pointer"
               >
                 변경
               </button>
