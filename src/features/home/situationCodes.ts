@@ -33,6 +33,10 @@ export function mapLocationToCode(location: string): string | undefined {
   return LOCATION_CODES[location];
 }
 
+export function mapCodeToLocationLabel(code: string): string | undefined {
+  return Object.entries(LOCATION_CODES).find(([, v]) => v === code)?.[0];
+}
+
 export function mapPostureToCode(posture: string): string | undefined {
   return POSTURE_CODES[posture];
 }
