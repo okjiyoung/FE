@@ -9,6 +9,7 @@ import FilterChips, {
 import FavoriteListSection from "@/features/favorites/components/FavoriteListSection";
 import { FavoriteRoutine } from "@/features/favorites/types/favorite";
 import {
+  deleteFavoriteStretching,
   getFavoriteStretchings,
   UserFavoriteStretchingResponse,
 } from "@/features/favorites/api/favoriteStretching";
@@ -77,9 +78,18 @@ export default function FavoritesPage() {
     return item.category === selectedFilter;
   });
 
-  const handleToggleFavorite = (id: string) => {
-    // 서버에서 즐겨찾기를 삭제하는 API 연동은 아직 없어서 화면에서만 제거함
+  const handleToggleFavorite = async (id: string) => {
+    const removed = routines.find((item) => item.id === id);
     setRoutines((prev) => prev.filter((item) => item.id !== id));
+
+    try {
+      await deleteFavoriteStretching(Number(id));
+    } catch {
+      if (removed) {
+        setRoutines((prev) => [...prev, removed]);
+      }
+      setError("즐겨찾기 삭제에 실패했어요.");
+    }
   };
 
   const handleCardClick = (id: string) => {};

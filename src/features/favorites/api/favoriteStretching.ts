@@ -30,3 +30,7 @@ export function getFavoriteStretchings(userId: number) {
     `/api/userFavoriteStretchings/${userId}`
   );
 }
+
+export function deleteFavoriteStretching(id: number) {
+  return apiClient.delete<string>(`/api/userFavoriteStretchings/${id}`);
+}
