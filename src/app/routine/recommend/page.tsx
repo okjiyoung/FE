@@ -1,23 +1,42 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/ui/Header";
 import { ApplyButton } from "@/components/ui/ApplyButton";
 import { RoutineSummaryCard } from "@/features/routine/components/RoutineSummaryCard";
 import { RoutineItem } from "@/features/routine/components/RoutineItem";
+import {
+  getAllStretchings,
+  StretchingResponse,
+} from "@/features/stretching/api/stretching";
+import { saveStretchingPlan } from "@/features/stretching/stretchingPlan";
+
+function formatDuration(seconds: number) {
+  if (seconds < 60) return `${seconds}초`;
+
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return rest === 0 ? `${minutes}분` : `${minutes}분 ${rest}초`;
+}
 
 export default function RecommendRoutinePage() {
   const router = useRouter();
+  const [stretchings, setStretchings] = useState<StretchingResponse[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const routineList = [
-    { id: 1, step: "01", title: "턱 당기기", duration: "30초" },
-    { id: 2, step: "02", title: "어깨 내리기", duration: "30초" },
-    { id: 3, step: "03", title: "견갑골 조이기", duration: "30초" },
-    { id: 4, step: "04", title: "견갑골 조이기", duration: "30초" },
-    { id: 5, step: "05", title: "견갑골 조이기", duration: "30초" },
-  ];
+  useEffect(() => {
+    getAllStretchings()
+      .then(setStretchings)
+      .catch(() => setError("루틴을 불러오지 못했어요."))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const handleStartRoutine = () => {
+    if (stretchings.length === 0) return;
+
+    saveStretchingPlan(stretchings);
     router.push("/stretching");
   };
 
@@ -34,18 +53,36 @@ export default function RecommendRoutinePage() {
         tags={["집", "서 있음", "한 손 만 가능"]}
         description="손을 쓰지 않고 제자리에서"
       />
+
+      {error && (
+        <p className="font-pretendard text-[14px] font-medium text-[#DF5757]">
+          {error}
+        </p>
+      )}
+
       <div className="flex w-[342px] flex-col items-start gap-[8px]">
-        {routineList.map((item) => (
-          <RoutineItem
-            key={item.id}
-            step={item.step}
-            title={item.title}
-            duration={item.duration}
-          />
-        ))}
+        {isLoading ? (
+          <p className="font-pretendard text-[14px] text-teum-muted">
+            불러오는 중...
+          </p>
+        ) : (
+          stretchings.map((item, index) => (
+            <RoutineItem
+              key={item.id}
+              step={String(index + 1).padStart(2, "0")}
+              title={item.name}
+              duration={formatDuration(item.durationSeconds)}
+            />
+          ))
+        )}
       </div>
       <div className="mt-auto flex w-[390px] -translate-x-[24px] flex-col items-start gap-[12px] px-[24px]">
-        <ApplyButton onClick={handleStartRoutine}>루틴 시작하기</ApplyButton>
+        <ApplyButton
+          onClick={handleStartRoutine}
+          disabled={stretchings.length === 0}
+        >
+          루틴 시작하기
+        </ApplyButton>
       </div>
     </div>
   );
