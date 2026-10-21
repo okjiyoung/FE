@@ -35,10 +35,10 @@ export function CustomTimeBottomSheet({
         <div className="h-[4px] w-[53px] rounded-full bg-[#BDC5CE]" />
 
         <div className="flex flex-col items-center gap-[6px]">
-          <h3 className="text-center font-['Pretendard'] text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
+          <h3 className="text-center font-pretendard text-[18px] font-bold tracking-[-0.36px] text-teum-ink">
             원하는 시간을 설정해주세요
           </h3>
-          <p className="w-full text-center font-['Pretendard'] text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
+          <p className="w-full text-center font-pretendard text-[13px] font-normal tracking-[-0.26px] text-[#838A95]">
             1분부터 30분까지 선택할 수 있어요
           </p>
         </div>
@@ -57,7 +57,7 @@ export function CustomTimeBottomSheet({
             />
           </button>
 
-          <span className="font-['Pretendard'] text-[28px] font-bold leading-[20px] tracking-[-0.56px] text-[#20211F]">
+          <span className="font-pretendard text-[28px] font-bold leading-[20px] tracking-[-0.56px] text-[#20211F]">
             {tempMinutes}분
           </span>
 

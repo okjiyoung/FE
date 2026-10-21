@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { TimeSelectionCard } from "@/features/home/TimeSelectionCard";
 import { QuickBannerCard } from "@/features/home/QuickBannerCard";
 import { RecentStretchingCard } from "@/features/home/RecentStretchingCard";
+import { ConnectionBanner } from "@/features/home/components/ConnectionBanner";
 
 export default function HomePage() {
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function HomePage() {
         </button>
       </header>
 
+      <ConnectionBanner onConnect={() => console.log("연결하기 클릭")} />
       <TimeSelectionCard />
       <QuickBannerCard />
       <RecentStretchingCard />
