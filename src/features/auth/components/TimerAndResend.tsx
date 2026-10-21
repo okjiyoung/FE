@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 interface TimerAndResendProps {
-  timeLeft: string; // 예: "02:48"
+  timeLeft: string; 
   onResend: () => void;
 }
 

@@ -31,11 +31,11 @@ function formatRelativeDate(iso: string): string {
 }
 
 function toFavoriteRoutine(
-  res: UserFavoriteStretchingResponse
+  res: UserFavoriteStretchingResponse,
 ): FavoriteRoutine {
   const totalSeconds = res.stretchings.reduce(
     (sum, s) => sum + s.durationSeconds,
-    0
+    0,
   );
   const totalMinutes = Math.round(totalSeconds / 60);
   const areas = Array.from(new Set(res.stretchings.map((s) => s.area)));

@@ -1,23 +1,75 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/ui/Header";
 import { ApplyButton } from "@/components/ui/ApplyButton";
 import { RoutineCompleteSummary } from "@/features/routine/components/RoutineCompleteSummary";
+import { StretchingResponse } from "@/features/stretching/api/stretching";
+import {
+  clearStretchingPlan,
+  readStretchingPlan,
+} from "@/features/stretching/stretchingPlan";
+import { getMyInfo } from "@/features/auth/api/user";
+import { createFavoriteStretching } from "@/features/favorites/api/favoriteStretching";
+import { ApiError } from "@/services/apiClient";
 
 export default function RoutineCompletePage() {
   const router = useRouter();
 
-  const handleFavorite = () => {
-    // 즐겨찾기 저장 로직
+  const [plan] = useState<StretchingResponse[] | null>(() =>
+    readStretchingPlan()
+  );
+  const [isFavoriting, setIsFavoriting] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
+  const [favoriteError, setFavoriteError] = useState<string | null>(null);
+
+  const hasPlan = !!plan && plan.length > 0;
+
+  useEffect(() => {
+    if (!hasPlan) {
+      router.replace("/");
+    }
+  }, [hasPlan, router]);
+
+  if (!plan || plan.length === 0) return null;
+
+  const totalSeconds = plan.reduce((sum, s) => sum + s.durationSeconds, 0);
+  const durationMinutes = Math.max(1, Math.round(totalSeconds / 60));
+  const actionCount = plan.length;
+  const areas = Array.from(new Set(plan.map((s) => s.area)));
+  const description = `${areas.join(", ")} 스트레칭 완료`;
+
+  const handleFavorite = async () => {
+    if (isFavoriting || isFavorited) return;
+
+    setIsFavoriting(true);
+    setFavoriteError(null);
+
+    try {
+      const me = await getMyInfo();
+      await createFavoriteStretching(
+        me.id,
+        plan.map((s) => s.id)
+      );
+      setIsFavorited(true);
+    } catch (err) {
+      setFavoriteError(
+        err instanceof ApiError ? err.message : "즐겨찾기 저장에 실패했어요."
+      );
+    } finally {
+      setIsFavoriting(false);
+    }
   };
 
   const handleGoHome = () => {
+    clearStretchingPlan();
     router.push("/");
   };
 
   const handleViewHistory = () => {
+    clearStretchingPlan();
     router.push("/history");
   };
 
@@ -37,7 +89,7 @@ export default function RoutineCompletePage() {
       </div>
 
       <h1 className="w-[342px] text-center font-pretendard text-[30px] font-bold leading-[44px] tracking-[-0.6px] text-teum-ink">
-        3분의 틈,
+        {durationMinutes}분의 틈,
         <br />잘 사용하셨어요.
       </h1>
 
@@ -46,17 +98,28 @@ export default function RoutineCompletePage() {
       </p>
 
       <RoutineCompleteSummary
-        durationMinutes={3}
-        actionCount={5}
-        description="목, 어깨, 허리 스트레칭 완료"
+        durationMinutes={durationMinutes}
+        actionCount={actionCount}
+        description={description}
       />
+
+      {favoriteError && (
+        <p className="font-pretendard text-[14px] font-medium text-[#DF5757]">
+          {favoriteError}
+        </p>
+      )}
 
       <button
         type="button"
         onClick={handleFavorite}
-        className="flex h-[56px] w-[342px] cursor-pointer items-center justify-center rounded-[28px] bg-teum-tag-bg font-pretendard text-[16px] font-semibold leading-[23px] tracking-[-0.32px] text-teum-ink transition-opacity hover:opacity-90"
+        disabled={isFavoriting || isFavorited}
+        className="flex h-[56px] w-[342px] cursor-pointer items-center justify-center rounded-[28px] bg-teum-tag-bg font-pretendard text-[16px] font-semibold leading-[23px] tracking-[-0.32px] text-teum-ink transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        ♡ &nbsp;즐겨찾기에 저장
+        {isFavorited
+          ? "즐겨찾기에 저장됨"
+          : isFavoriting
+            ? "저장 중..."
+            : "♡  즐겨찾기에 저장"}
       </button>
 
       <div className="flex w-[390px] -mx-[24px] flex-col items-center gap-[12px] border-t border-[#ECEEF0] px-[24px] pt-[24px]">

@@ -53,7 +53,6 @@ export default function StretchingPage() {
     if (currentStep < totalSteps) {
       setCurrentStep((prev) => prev + 1);
     } else {
-      clearStretchingPlan();
       router.push("/routine/complete");
     }
   };

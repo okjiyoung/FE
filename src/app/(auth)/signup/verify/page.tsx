@@ -12,7 +12,7 @@ import {
 } from "@/features/auth/api/emailVerification";
 import { useApiRequest } from "@/hooks/useApiRequest";
 
-const CODE_TTL_SECONDS = 180; // 인증번호 유효 시간(3분)
+const CODE_TTL_SECONDS = 180; 
 
 function formatTime(totalSeconds: number) {
   const minutes = Math.floor(totalSeconds / 60);
@@ -45,7 +45,7 @@ function VerifyCodeContent() {
   }, [isExpired]);
 
   const handleChangeCode = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return; // 숫자만 허용
+    if (!/^\d*$/.test(value)) return;  
 
     const newCode = [...code];
     newCode[index] = value;
