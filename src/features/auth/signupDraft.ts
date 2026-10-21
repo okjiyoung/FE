@@ -7,10 +7,13 @@ export interface SignupDraft {
 }
 
 export function saveSignupDraft(draft: SignupDraft): void {
+  if (typeof window === "undefined") return;
   sessionStorage.setItem(SIGNUP_DRAFT_KEY, JSON.stringify(draft));
 }
 
 export function readSignupDraft(): SignupDraft | null {
+  if (typeof window === "undefined") return null;
+
   const raw = sessionStorage.getItem(SIGNUP_DRAFT_KEY);
   if (!raw) return null;
 
@@ -22,5 +25,6 @@ export function readSignupDraft(): SignupDraft | null {
 }
 
 export function clearSignupDraft(): void {
+  if (typeof window === "undefined") return;
   sessionStorage.removeItem(SIGNUP_DRAFT_KEY);
 }
