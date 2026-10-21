@@ -6,9 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cap:sync": "next build && npx cap sync",
+    "cap:android": "npx cap open android",
+    "cap:ios": "npx cap open ios"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/cli": "^8.5.3",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/local-notifications": "^8.3.1",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8"

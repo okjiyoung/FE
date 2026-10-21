@@ -5,6 +5,22 @@ import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { getMyInfo } from "@/features/auth/api/user";
 import { checkInactive } from "@/features/health/api/healthData";
+import { notifyInactive } from "@/services/notifications";
+
+const LAST_NOTIFIED_KEY = "teumjit_last_notified_inactive_minutes";
+const RENOTIFY_THRESHOLD_MINUTES = 15;
+
+function shouldRenotify(inactiveMinutes: number): boolean {
+  if (typeof window === "undefined") return false;
+
+  const last = Number(localStorage.getItem(LAST_NOTIFIED_KEY) ?? "0");
+  return inactiveMinutes >= last + RENOTIFY_THRESHOLD_MINUTES;
+}
+
+function markNotified(inactiveMinutes: number): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(LAST_NOTIFIED_KEY, String(inactiveMinutes));
+}
 
 function formatInactiveDuration(minutes: number): string {
   if (minutes < 60) return `${minutes}분째`;
@@ -21,7 +37,14 @@ export function InactiveNoticeCard() {
     getMyInfo()
       .then((me) => checkInactive(me.id))
       .then((result) => {
-        if (result.inactive) setInactiveMinutes(result.inactiveMinutes);
+        if (!result.inactive) return;
+
+        setInactiveMinutes(result.inactiveMinutes);
+
+        if (shouldRenotify(result.inactiveMinutes)) {
+          notifyInactive(result.inactiveMinutes);
+          markNotified(result.inactiveMinutes);
+        }
       })
       .catch(() => {
         // 워치 미연결 등으로 조회 실패 시 배너를 표시하지 않음
