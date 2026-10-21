@@ -11,6 +11,21 @@ import {
   Difficulty,
 } from "@/features/home/components/DifficultyDropdown";
 import { SituationBottomSheet } from "@/features/home/components/SituationBottomSheet";
+import {
+  mapDifficultyToLevel,
+  mapLocationToCode,
+  mapPostureToCode,
+  mapRestrictionToConstraints,
+  parseSelectedTimeToSeconds,
+} from "@/features/home/situationCodes";
+import { saveRecommendationInput } from "@/features/stretching/recommendationInput";
+
+interface Situation {
+  location: string;
+  posture: string;
+  restriction: string;
+  bodyParts: string[];
+}
 
 export function TimeSelectionCard() {
   const router = useRouter();
@@ -18,23 +33,34 @@ export function TimeSelectionCard() {
   const [difficulty, setDifficulty] = useState<Difficulty>("중간");
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
-  const [currentTags, setCurrentTags] = useState<string[]>([
-    "집",
-    "서 있음",
-    "목",
-    "어깨",
-    "허리",
-  ]);
+  const [situation, setSituation] = useState<Situation>({
+    location: "집",
+    posture: "서 있음",
+    restriction: "상관없음",
+    bodyParts: ["목", "어깨", "허리"],
+  });
 
   const timeOptions = ["1분", "3분", "5분", "10분"];
+  const currentTags = [
+    situation.location,
+    situation.posture,
+    ...situation.bodyParts,
+  ];
 
-  const handleApplySituation = (data: {
-    location: string;
-    posture: string;
-    restriction: string;
-    bodyParts: string[];
-  }) => {
-    setCurrentTags([data.location, data.posture, ...data.bodyParts]);
+  const handleApplySituation = (data: Situation) => {
+    setSituation(data);
+  };
+
+  const handleStartStretching = () => {
+    saveRecommendationInput({
+      remainingTimeSeconds: parseSelectedTimeToSeconds(selectedTime),
+      posture: mapPostureToCode(situation.posture),
+      location: mapLocationToCode(situation.location),
+      constraints: mapRestrictionToConstraints(situation.restriction),
+      level: mapDifficultyToLevel(difficulty),
+      display: situation,
+    });
+    router.push("/routine/recommend");
   };
 
   return (
@@ -101,10 +127,7 @@ export function TimeSelectionCard() {
         </div>
 
         {/* 스트레칭 시작 */}
-        <Button
-          variant="primary"
-          onClick={() => router.push("/routine/recommend")}
-        >
+        <Button variant="primary" onClick={handleStartStretching}>
           스트레칭 시작하기
         </Button>
       </Card>

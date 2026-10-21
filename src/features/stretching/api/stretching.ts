@@ -16,6 +16,24 @@ export interface StretchingDifficultyResponse {
   difficulty: string;
 }
 
+export interface StretchingRecommendationRequest {
+  userId: number;
+  remainingTimeSeconds: number;
+  posture?: string;
+  location?: string;
+  constraints?: string[];
+  level: number;
+}
+
+export function getRecommendedStretchings(
+  request: StretchingRecommendationRequest
+) {
+  return apiClient.post<StretchingResponse[]>(
+    "/api/stretchings/recommend",
+    request
+  );
+}
+
 export function getAllStretchings() {
   return apiClient.get<StretchingResponse[]>("/api/stretchings");
 }

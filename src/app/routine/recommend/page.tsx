@@ -7,10 +7,16 @@ import { ApplyButton } from "@/components/ui/ApplyButton";
 import { RoutineSummaryCard } from "@/features/routine/components/RoutineSummaryCard";
 import { RoutineItem } from "@/features/routine/components/RoutineItem";
 import {
-  getAllStretchings,
+  getRecommendedStretchings,
   StretchingResponse,
 } from "@/features/stretching/api/stretching";
+import { getMyInfo } from "@/features/auth/api/user";
+import { ApiError } from "@/services/apiClient";
 import { saveStretchingPlan } from "@/features/stretching/stretchingPlan";
+import {
+  readRecommendationInput,
+  RecommendationInput,
+} from "@/features/stretching/recommendationInput";
 
 function formatDuration(seconds: number) {
   if (seconds < 60) return `${seconds}초`;
@@ -22,16 +28,40 @@ function formatDuration(seconds: number) {
 
 export default function RecommendRoutinePage() {
   const router = useRouter();
+  const [input] = useState<RecommendationInput | null>(() =>
+    readRecommendationInput()
+  );
   const [stretchings, setStretchings] = useState<StretchingResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getAllStretchings()
+    if (!input) {
+      router.replace("/");
+      return;
+    }
+
+    getMyInfo()
+      .then((me) =>
+        getRecommendedStretchings({
+          userId: me.id,
+          remainingTimeSeconds: input.remainingTimeSeconds,
+          posture: input.posture,
+          location: input.location,
+          constraints: input.constraints,
+          level: input.level,
+        })
+      )
       .then(setStretchings)
-      .catch(() => setError("루틴을 불러오지 못했어요."))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) {
+          router.replace("/login");
+          return;
+        }
+        setError("추천 루틴을 불러오지 못했어요.");
+      })
       .finally(() => setIsLoading(false));
-  }, []);
+  }, [input, router]);
 
   const handleStartRoutine = () => {
     if (stretchings.length === 0) return;
@@ -40,18 +70,22 @@ export default function RecommendRoutinePage() {
     router.push("/stretching");
   };
 
+  if (!input) return null;
+
+  const { display } = input;
+
   return (
     <div className="flex h-full min-h-screen w-[390px] flex-col items-start gap-[20px] bg-[#F7F7F8] px-[24px] pb-[24px]">
       <Header title="추천 루틴" />
       <h1 className="w-[342px] text-[28px] font-bold leading-[41px] tracking-[-0.56px] text-teum-ink">
         지금의 나에게,
         <br />
-        3분이면 충분해요.
+        딱 맞는 루틴이에요.
       </h1>
       <RoutineSummaryCard
-        targetParts="목, 어깨"
-        tags={["집", "서 있음", "한 손 만 가능"]}
-        description="손을 쓰지 않고 제자리에서"
+        targetParts={display.bodyParts.join(", ")}
+        tags={[display.location, display.posture, display.restriction]}
+        description="지금 상황에 맞춰 골랐어요"
       />
 
       {error && (
