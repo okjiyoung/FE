@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthGate } from "@/features/auth/components/AuthGate";
+import { NotificationInit } from "@/features/auth/components/NotificationInit";
 
 export const metadata: Metadata = {
   title: "틈짓",
@@ -13,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <NotificationInit />
+        <AuthGate>{children}</AuthGate>
+      </body>
     </html>
   );
 }

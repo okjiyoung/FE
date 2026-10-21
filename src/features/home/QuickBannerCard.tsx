@@ -10,8 +10,8 @@ interface QuickBannerCardProps {
 }
 
 export function QuickBannerCard({
-  minutes = 8,
-  completedCount = 3,
+  minutes = 0,
+  completedCount = 0,
   onClick,
 }: QuickBannerCardProps) {
   return (

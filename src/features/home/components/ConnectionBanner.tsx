@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { ConnectionFlowModal } from "./ConnectionFlowModal";
 import { Toast } from "@/components/ui/Toast";
+import { getMyInfo } from "@/features/auth/api/user";
+import { getUserProfile } from "@/features/settings/api/userProfile";
+import {
+  getWatchConnected,
+  setWatchConnected,
+} from "@/features/home/connectionPreferences";
 
 export function ConnectionBanner() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -11,7 +17,21 @@ export function ConnectionBanner() {
   const [isHomeRegistered, setIsHomeRegistered] = useState(false);
   const [isWatchConnected, setIsWatchConnected] = useState(false);
 
+  useEffect(() => {
+    setIsWatchConnected(getWatchConnected());
+
+    getMyInfo()
+      .then((me) => getUserProfile(me.id))
+      .then((profile) => {
+        if (profile.homeAddress) setIsHomeRegistered(true);
+      })
+      .catch(() => {
+        // 아직 프로필이 없는 신규 유저 등 - 미등록 상태로 유지
+      });
+  }, []);
+
   const handleCompleteWatch = () => {
+    setWatchConnected(true);
     setIsWatchConnected(true);
     setShowToast(true);
     setTimeout(() => {

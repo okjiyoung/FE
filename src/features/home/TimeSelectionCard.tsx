@@ -24,6 +24,7 @@ import { saveRecommendationInput } from "@/features/stretching/recommendationInp
 import { getMyInfo } from "@/features/auth/api/user";
 import { getEnvironment } from "@/features/location/api/environment";
 import { createLocationData } from "@/features/location/api/locationData";
+import { syncPreferredBodyAreas } from "@/features/health/api/userBodyPreferences";
 
 interface Situation {
   location: string;
@@ -56,6 +57,10 @@ export function TimeSelectionCard() {
 
   const handleApplySituation = (data: Situation) => {
     setSituation(data);
+
+    getMyInfo()
+      .then((me) => syncPreferredBodyAreas(me.id, data.bodyParts))
+      .catch(() => {});
   };
 
   const handleCustomTimeConfirm = (minutes: number) => {

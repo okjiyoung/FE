@@ -9,11 +9,14 @@ import FilterChips, {
 import FavoriteListSection from "@/features/favorites/components/FavoriteListSection";
 import { FavoriteRoutine } from "@/features/favorites/types/favorite";
 import {
+  deleteFavoriteStretching,
   getFavoriteStretchings,
   UserFavoriteStretchingResponse,
 } from "@/features/favorites/api/favoriteStretching";
 import { getMyInfo } from "@/features/auth/api/user";
 import { ApiError } from "@/services/apiClient";
+import { StretchingResponse } from "@/features/stretching/api/stretching";
+import { saveStretchingPlan } from "@/features/stretching/stretchingPlan";
 
 function formatRelativeDate(iso: string): string {
   const createdAt = new Date(iso);
@@ -55,13 +58,21 @@ export default function FavoritesPage() {
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("all");
   const [routines, setRoutines] = useState<FavoriteRoutine[]>([]);
+  const [favoritesById, setFavoritesById] = useState<
+    Record<string, UserFavoriteStretchingResponse>
+  >({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     getMyInfo()
       .then((me) => getFavoriteStretchings(me.id))
-      .then((list) => setRoutines(list.map(toFavoriteRoutine)))
+      .then((list) => {
+        setRoutines(list.map(toFavoriteRoutine));
+        setFavoritesById(
+          Object.fromEntries(list.map((res) => [String(res.id), res])),
+        );
+      })
       .catch((err) => {
         if (err instanceof ApiError && err.status === 401) {
           router.replace("/login");
@@ -77,15 +88,41 @@ export default function FavoritesPage() {
     return item.category === selectedFilter;
   });
 
-  const handleToggleFavorite = (id: string) => {
-    // 서버에서 즐겨찾기를 삭제하는 API 연동은 아직 없어서 화면에서만 제거함
+  const handleToggleFavorite = async (id: string) => {
+    const removed = routines.find((item) => item.id === id);
     setRoutines((prev) => prev.filter((item) => item.id !== id));
+
+    try {
+      await deleteFavoriteStretching(Number(id));
+    } catch {
+      if (removed) {
+        setRoutines((prev) => [...prev, removed]);
+      }
+      setError("즐겨찾기 삭제에 실패했어요.");
+    }
   };
 
-  const handleCardClick = (id: string) => {};
+  const handleCardClick = (id: string) => {
+    const favorite = favoritesById[id];
+    if (!favorite || favorite.stretchings.length === 0) return;
+
+    const plan: StretchingResponse[] = [...favorite.stretchings]
+      .sort((a, b) => a.sequenceOrder - b.sequenceOrder)
+      .map(({ id, name, level, area, description, durationSeconds }) => ({
+        id,
+        name,
+        level,
+        area,
+        description,
+        durationSeconds,
+      }));
+
+    saveStretchingPlan(plan);
+    router.push("/stretching");
+  };
 
   return (
-    <main className="flex flex-col items-start w-full p-[24px] gap-[16px] flex-1 bg-[#F7F7F7] rounded-[32px]">
+    <main className="flex min-h-full flex-col items-start w-full p-[24px] gap-[16px] bg-[#F7F7F7] rounded-[32px]">
       <FavoritesHeader />
       <FilterChips
         selectedFilter={selectedFilter}
