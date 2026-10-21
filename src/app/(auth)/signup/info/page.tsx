@@ -31,7 +31,7 @@ function SignupInfoContent() {
     e.preventDefault();
     if (!isFormValid) return;
 
-    saveSignupDraft({ email, password });
+    saveSignupDraft({ email, password, nickname });
     router.push("/signup/terms");
   };
 

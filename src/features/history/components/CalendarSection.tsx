@@ -12,9 +12,9 @@ const CALENDAR_DAYS = [
   { day: 6, level: 0 },
   { day: 7, level: 0 },
   { day: 8, level: 0 },
-  { day: 9, level: 3 }, // 10분 이상 (#8A79E8)
-  { day: 10, level: 1 }, // 1~5분 (#EBE7FF)
-  { day: 11, level: 2 }, // 5~10분 (#BEB3FF)
+  { day: 9, level: 3 },  
+  { day: 10, level: 1 },  
+  { day: 11, level: 2 },  
   { day: 12, level: 0 },
   { day: 13, level: 0 },
   { day: 14, level: 0 },
@@ -44,7 +44,7 @@ export default function CalendarSection() {
       case 2:
         return "bg-[#BEB3FF] text-teum-ink font-medium";
       case 3:
-        return "bg-[#8A79E8] text-teum-ink font-medium"; // 텍스트 색상을 검정(text-teum-ink)으로 변경
+        return "bg-[#8A79E8] text-teum-ink font-medium";  
       default:
         return "text-teum-ink font-medium";
     }

@@ -1,64 +1,76 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import FavoritesHeader from "@/features/favorites/components/FavoriteHeader";
 import FilterChips, {
   FilterType,
 } from "@/features/favorites/components/FilterChips";
 import FavoriteListSection from "@/features/favorites/components/FavoriteListSection";
 import { FavoriteRoutine } from "@/features/favorites/types/favorite";
+import {
+  getFavoriteStretchings,
+  UserFavoriteStretchingResponse,
+} from "@/features/favorites/api/favoriteStretching";
+import { getMyInfo } from "@/features/auth/api/user";
+import { ApiError } from "@/services/apiClient";
 
-const MOCK_ROUTINES: FavoriteRoutine[] = [
-  {
-    id: "1",
-    durationText: "3분 · 5개 동작",
-    title: "얼굴 / 어깨",
-    createdAtText: "12시간 전",
-    tags: ["서 있음", "집", "티 나지 않게"],
+function formatRelativeDate(iso: string): string {
+  const createdAt = new Date(iso);
+  const diffMs = Date.now() - createdAt.getTime();
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+  if (diffHours < 1) {
+    const diffMinutes = Math.max(1, Math.floor(diffMs / (1000 * 60)));
+    return `${diffMinutes}분 전`;
+  }
+  if (diffHours < 24) {
+    return `${diffHours}시간 전`;
+  }
+  return `${createdAt.getMonth() + 1}월 ${createdAt.getDate()}일`;
+}
+
+function toFavoriteRoutine(
+  res: UserFavoriteStretchingResponse,
+): FavoriteRoutine {
+  const totalSeconds = res.stretchings.reduce(
+    (sum, s) => sum + s.durationSeconds,
+    0,
+  );
+  const totalMinutes = Math.round(totalSeconds / 60);
+  const areas = Array.from(new Set(res.stretchings.map((s) => s.area)));
+
+  return {
+    id: String(res.id),
+    durationText: `${totalMinutes}분 · ${res.stretchings.length}개 동작`,
+    title: res.title,
+    createdAtText: formatRelativeDate(res.createdAt),
+    tags: areas,
     isFavorite: true,
-    category: "3min_or_less",
-  },
-  {
-    id: "2",
-    durationText: "3분 · 5개 동작",
-    title: "얼굴 / 어깨",
-    createdAtText: "1일 전",
-    tags: ["서 있음", "집", "티 나지 않게"],
-    isFavorite: true,
-    category: "3min_or_less",
-  },
-  {
-    id: "3",
-    durationText: "3분 · 5개 동작",
-    title: "얼굴 / 어깨",
-    createdAtText: "9월 24일",
-    tags: ["서 있음", "집", "티 나지 않게"],
-    isFavorite: true,
-    category: "3min_or_less",
-  },
-  {
-    id: "4",
-    durationText: "5분 · 7개 동작",
-    title: "목 / 어깨 집중",
-    createdAtText: "9월 20일",
-    tags: ["앉아있음", "사무실", "티 나지 않게"],
-    isFavorite: true,
-    category: "4min_or_more",
-  },
-  {
-    id: "5",
-    durationText: "4분 · 6개 동작",
-    title: "전신 스트레칭",
-    createdAtText: "9월 15일",
-    tags: ["서 있음", "야외", "크게 움직임"],
-    isFavorite: true,
-    category: "4min_or_more",
-  },
-];
+    category: totalSeconds <= 180 ? "3min_or_less" : "4min_or_more",
+  };
+}
 
 export default function FavoritesPage() {
+  const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState<FilterType>("all");
-  const [routines, setRoutines] = useState<FavoriteRoutine[]>(MOCK_ROUTINES);
+  const [routines, setRoutines] = useState<FavoriteRoutine[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getMyInfo()
+      .then((me) => getFavoriteStretchings(me.id))
+      .then((list) => setRoutines(list.map(toFavoriteRoutine)))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) {
+          router.replace("/login");
+          return;
+        }
+        setError("즐겨찾기 목록을 불러오지 못했어요.");
+      })
+      .finally(() => setIsLoading(false));
+  }, [router]);
 
   const filteredRoutines = routines.filter((item) => {
     if (selectedFilter === "all") return true;
@@ -66,6 +78,7 @@ export default function FavoritesPage() {
   });
 
   const handleToggleFavorite = (id: string) => {
+    // 서버에서 즐겨찾기를 삭제하는 API 연동은 아직 없어서 화면에서만 제거함
     setRoutines((prev) => prev.filter((item) => item.id !== id));
   };
 
@@ -78,11 +91,24 @@ export default function FavoritesPage() {
         selectedFilter={selectedFilter}
         onSelectFilter={setSelectedFilter}
       />
-      <FavoriteListSection
-        routines={filteredRoutines}
-        onCardClick={handleCardClick}
-        onToggleFavorite={handleToggleFavorite}
-      />
+
+      {error && (
+        <p className="font-pretendard text-[14px] font-medium text-[#DF5757]">
+          {error}
+        </p>
+      )}
+
+      {isLoading ? (
+        <p className="font-pretendard text-[14px] text-teum-muted">
+          불러오는 중...
+        </p>
+      ) : (
+        <FavoriteListSection
+          routines={filteredRoutines}
+          onCardClick={handleCardClick}
+          onToggleFavorite={handleToggleFavorite}
+        />
+      )}
     </main>
   );
 }

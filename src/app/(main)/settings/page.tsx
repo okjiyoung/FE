@@ -6,18 +6,30 @@ import { UserProfileCard } from "@/features/settings/components/UserProfileCard"
 import { SettingItemCard } from "@/features/settings/components/SettingItemCard";
 import { Toggle } from "@/components/ui/Toggle";
 import { getMyInfo } from "@/features/auth/api/user";
+import { getUserProfile } from "@/features/settings/api/userProfile";
 import { clearAuthToken } from "@/services/authToken";
+import { ApiError } from "@/services/apiClient";
 
 export default function SettingsPage() {
   const router = useRouter();
   const [recommendNotification, setRecommendNotification] = useState(true);
   const [permissionManagement, setPermissionManagement] = useState(true);
   const [email, setEmail] = useState<string | null>(null);
+  const [nickname, setNickname] = useState("회원");
 
   useEffect(() => {
     getMyInfo()
-      .then((info) => setEmail(info.userId))
-      .catch(() => router.replace("/login"));
+      .then((info) => {
+        setEmail(info.userId);
+        return getUserProfile(info.id);
+      })
+      .then((profile) => setNickname(profile.nickname))
+      .catch((err) => {
+        if (err instanceof ApiError && err.status === 401) {
+          router.replace("/login");
+        }
+        // 프로필 조회 실패(아직 프로필이 없는 유저 등)는 닉네임 플레이스홀더를 유지함
+      });
   }, [router]);
 
   const handleLogout = () => {
@@ -33,7 +45,7 @@ export default function SettingsPage() {
       </h1>
 
       {/* 사용자 정보 카드 */}
-      <UserProfileCard nickname="회원" email={email ?? ""} />
+      <UserProfileCard nickname={nickname} email={email ?? ""} />
 
       {/* 섹션 라벨 */}
       <span className="text-[13px] font-medium leading-[19px] tracking-[-0.26px] text-teum-text-sub">

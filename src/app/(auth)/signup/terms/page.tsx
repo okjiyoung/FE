@@ -12,6 +12,7 @@ import { signUp, login } from "@/features/auth/api/user";
 import { clearSignupDraft, readSignupDraft } from "@/features/auth/signupDraft";
 import { setAuthToken } from "@/services/authToken";
 import { ApiError } from "@/services/apiClient";
+import { createUserProfile } from "@/features/settings/api/userProfile";
 
 export default function TermsPage() {
   const router = useRouter();
@@ -63,6 +64,11 @@ export default function TermsPage() {
       await signUp(draft.email, draft.password);
       const loginResult = await login(draft.email, draft.password);
       setAuthToken(loginResult.token, true);
+      await createUserProfile({
+        userId: loginResult.id,
+        email: draft.email,
+        nickname: draft.nickname,
+      });
       clearSignupDraft();
       router.push("/signup/complete");
     } catch (err) {
