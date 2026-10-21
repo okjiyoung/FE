@@ -122,7 +122,7 @@ export default function FavoritesPage() {
   };
 
   return (
-    <main className="flex flex-col items-start w-full p-[24px] gap-[16px] flex-1 bg-[#F7F7F7] rounded-[32px]">
+    <main className="flex min-h-[844px] flex-col items-start w-full p-[24px] gap-[16px] bg-[#F7F7F7] rounded-[32px]">
       <FavoritesHeader />
       <FilterChips
         selectedFilter={selectedFilter}

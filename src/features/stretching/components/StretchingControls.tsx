@@ -25,7 +25,7 @@ export function StretchingControls({
           alt="이전"
           width={28}
           height={28}
-          className="scale-x-[-1] h-auto w-auto"
+          className="h-auto w-auto"
         />
       </button>
 
@@ -53,7 +53,7 @@ export function StretchingControls({
           alt="다음"
           width={28}
           height={28}
-          className="h-auto w-auto"
+          className="scale-x-[-1] h-auto w-auto"
         />
       </button>
     </div>

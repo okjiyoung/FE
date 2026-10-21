@@ -6,12 +6,13 @@ import { TimeSelectionCard } from "@/features/home/TimeSelectionCard";
 import { QuickBannerCard } from "@/features/home/QuickBannerCard";
 import { RecentStretchingCard } from "@/features/home/RecentStretchingCard";
 import { ConnectionBanner } from "@/features/home/components/ConnectionBanner";
+import { InactiveNoticeCard } from "@/features/home/components/InactiveNoticeCard";
 
 export default function HomePage() {
   const router = useRouter();
 
   return (
-    <main className="mx-auto flex h-[844px] w-[390px] flex-col items-start gap-[20px] rounded-[32px] bg-teum-bg p-[24px]">
+    <main className="mx-auto flex min-h-[844px] w-[390px] flex-col items-start gap-[20px] rounded-[32px] bg-teum-bg p-[24px]">
       <header className="flex w-[342px] items-center justify-between pt-[24px]">
         <div className="flex items-center">
           <Image
@@ -34,6 +35,7 @@ export default function HomePage() {
       </header>
 
       <ConnectionBanner />
+      <InactiveNoticeCard />
       <TimeSelectionCard />
       <QuickBannerCard />
       <RecentStretchingCard />
