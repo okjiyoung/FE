@@ -8,6 +8,11 @@ import { HomeAddressSearchSheet } from "./HomeaddressSearchSheet";
 import { WatchConnectGuideSheet } from "./WatchConnectGuide";
 import { SamsungHealthGuideSheet } from "./SamsungHealGuideSheet";
 import { useBottomSheetTransition } from "@/hooks/useBottomSheetTransition";
+import { getMyInfo } from "@/features/auth/api/user";
+import {
+  getUserProfile,
+  updateUserProfile,
+} from "@/features/settings/api/userProfile";
 
 interface ConnectionFlowModalProps {
   isOpen: boolean;
@@ -27,6 +32,11 @@ export function ConnectionFlowModal({
   onCompleteWatch,
 }: ConnectionFlowModalProps) {
   const [step, setStep] = useState<number>(1);
+  const [homeCoords, setHomeCoords] = useState<{
+    latitude: number;
+    longitude: number;
+  } | null>(null);
+  const [isSavingHome, setIsSavingHome] = useState(false);
   const { shouldRender, isVisible } = useBottomSheetTransition(isOpen);
 
   if (!shouldRender) return null;
@@ -34,7 +44,13 @@ export function ConnectionFlowModal({
   const handleRequestLocation = () => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        () => setStep(3),
+        (position) => {
+          setHomeCoords({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          });
+          setStep(3);
+        },
         () => setStep(3)
       );
     } else {
@@ -42,9 +58,31 @@ export function ConnectionFlowModal({
     }
   };
 
-  const handleCompleteHome = () => {
-    onCompleteHome();
-    setStep(1);
+  const handleCompleteHome = (address?: string) => {
+    if (isSavingHome) return;
+    setIsSavingHome(true);
+
+    getMyInfo()
+      .then((me) =>
+        getUserProfile(me.id).then((profile) =>
+          updateUserProfile(me.id, {
+            userId: me.id,
+            email: profile.email,
+            nickname: profile.nickname,
+            homeAddress: address,
+            homeLatitude: homeCoords?.latitude,
+            homeLongitude: homeCoords?.longitude,
+          })
+        )
+      )
+      .catch(() => {
+        // 저장 실패해도 집 등록 단계는 완료된 것으로 처리함 (연결 플로우는 로컬 UX 우선)
+      })
+      .finally(() => {
+        setIsSavingHome(false);
+        onCompleteHome();
+        setStep(1);
+      });
   };
 
   const handleCompleteWatch = () => {
@@ -82,13 +120,15 @@ export function ConnectionFlowModal({
         )}
         {step === 3 && (
           <HomeMapConfirmSheet
-            onConfirm={handleCompleteHome}
+            latitude={homeCoords?.latitude ?? null}
+            longitude={homeCoords?.longitude ?? null}
+            onConfirm={(address) => handleCompleteHome(address)}
             onCancel={() => setStep(1)}
           />
         )}
         {step === 4 && (
           <HomeAddressSearchSheet
-            onRegister={handleCompleteHome}
+            onRegister={() => handleCompleteHome()}
             onCancel={() => setStep(1)}
           />
         )}
