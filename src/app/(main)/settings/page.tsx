@@ -64,7 +64,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="flex min-h-[844px] w-[390px] flex-1 flex-col items-start gap-[20px] rounded-[32px] bg-teum-bg p-[24px]">
+    <div className="flex min-h-full w-[390px] flex-col items-start gap-[20px] rounded-[32px] bg-teum-bg p-[24px]">
       {/* 헤더 */}
       <h1 className="text-[28px] font-bold leading-[41px] tracking-[-0.56px] text-teum-ink">
         설정
